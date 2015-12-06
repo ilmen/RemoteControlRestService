@@ -1,21 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RemoteControlRestService
 {
     public static class Extentions
     {
-        //public static string Format(this String value, params object[] formatParameters)
+        //public static string Format(this string value, params object[] formatParameters)
         //{
         //    return String.Format(value, formatParameters);
         //}
 
-        public static bool IsNumeric(this String value)
+        public static bool IsNumeric(this string value)
         {
+            if (String.IsNullOrEmpty(value)) return false;
+
             return value.All(x => char.IsDigit(x));
+        }
+
+        public static string GetJsonView(this object value)
+        {
+            return "Instance of <" + value.GetType().ToString() + "> in JSON view:\r\n" +
+                JsonConvert.SerializeObject(value, Formatting.Indented);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace RemoteControlRestService.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/values/5 
+        // GET api/values/5
         public string Get(int id)
         {
             return "value";

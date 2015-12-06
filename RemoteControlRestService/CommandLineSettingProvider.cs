@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace RemoteControlRestService
 {
-    public class PortProvider
+    public class CommandLineSettingProvider
     {
         const string PORT_PARAMETER_NAME = "port";
 
-        public ushort GetPort(string[] args)
+        public CommandLineSetting GetSettings(string[] args)
         {
             if (args == null) throw new ArgumentNullException();
+            if (args.Any(x => !x.Contains('='))) throw new ArgumentException("Допустимы лишь параметры вида <ключ>=<значение>!");
 
             var argsParams = args
                 .Select(x => x.Split('='))
@@ -21,15 +22,15 @@ namespace RemoteControlRestService
                     Key = x[0],
                     Value = x[1]
                 });
-        
+
             var portParam = argsParams.SingleOrDefault(x => x.Key == PORT_PARAMETER_NAME);
             if (portParam == null) ThrowPortParametrNotFounded();
             if (!portParam.Value.IsNumeric()) ThrowWrongPortException();
 
             int portInt = Convert.ToInt32(portParam.Value);
             if (portInt < 1 || portInt > ushort.MaxValue) ThrowWrongPortException();
-            
-            return (ushort)portInt;                
+
+            return new CommandLineSetting() { Port = (ushort)portInt };
         }
 
         void ThrowPortParametrNotFounded()
@@ -40,6 +41,41 @@ namespace RemoteControlRestService
         void ThrowWrongPortException()
         {
             throw new InvalidCastException(String.Format("Номер порта должен быть натуральным числом не больше {0}!", ushort.MaxValue));
+        }
+    }
+
+    public class CommandLineSetting
+    {
+        public ushort Port
+        { get; set; }
+
+        #region Equals overriding
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+
+            var cmd = obj as CommandLineSetting;
+            if (cmd == null) return false;
+
+            return Equals(cmd);
+        }
+
+        public bool Equals(CommandLineSetting obj)
+        {
+            if (obj == null) return false;
+
+            return this.Port == obj.Port;
+        }
+
+        public override int GetHashCode()
+        {
+            return Port;
+        } 
+        #endregion
+
+        public override string ToString()
+        {
+            return this.GetJsonView();
         }
     }
 }

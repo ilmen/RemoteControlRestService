@@ -8,25 +8,33 @@ namespace RemoteControlRestService
     {
         static void Main(string[] args)
         {
-            var portProvider = new PortProvider();
-            var port = portProvider.GetPort(args);
-            var baseAddress = String.Format("http://localhost:{0}/", port);
+            var provider = new CommandLineSettingProvider();
+            var settings = provider.GetSettings(args);
+            var baseAddress = String.Format("http://localhost:{0}/", settings.Port);
 
             // Start OWIN host 
             using (WebApp.Start<Startup>(url: baseAddress))
             {
                 Console.WriteLine("Server started on <" + baseAddress + ">");
 
-                // Create HttpCient and make a request to api/values 
-                var client = new HttpClient();
+                if (System.Diagnostics.Debugger.IsAttached) TestRestService(baseAddress + "api/tasks");
 
-                var response = client.GetAsync(baseAddress + "api/tasks").Result;
-
-                Console.WriteLine(response);
-                Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+                Console.WriteLine("Press <ENTER> to exit");
+                Console.ReadLine();
+                Console.WriteLine("Exiting...");
             }
+        }
 
-            Console.ReadLine(); 
+        private static void TestRestService(string url)
+        {
+            Console.WriteLine("Test request:");
+
+            var client = new HttpClient();
+
+            var response = client.GetAsync(url).Result;
+
+            Console.WriteLine(response);
+            Console.WriteLine(response.Content.ReadAsStringAsync().Result);
         }
     }
 }
