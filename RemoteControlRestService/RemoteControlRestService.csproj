@@ -77,9 +77,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastracture\ConfigurationException.cs" />
+    <Compile Include="Models\Task.cs" />
     <Compile Include="Controllers\TasksController.cs" />
-    <Compile Include="Extentions.cs" />
-    <Compile Include="CommandLineSettingProvider.cs" />
+    <Compile Include="Infrastracture\Extentions.cs" />
+    <Compile Include="Infrastracture\CommandLineSettingProvider.cs" />
+    <Compile Include="Infrastracture\TaskCollectionFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

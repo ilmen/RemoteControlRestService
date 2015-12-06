@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemoteControlRestService
+namespace RemoteControlRestService.Infrastracture
 {
     public class CommandLineSettingProvider
     {
@@ -54,10 +54,7 @@ namespace RemoteControlRestService
         {
             if (obj == null) return false;
 
-            var cmd = obj as CommandLineSetting;
-            if (cmd == null) return false;
-
-            return Equals(cmd);
+            return Equals(obj as CommandLineSetting);
         }
 
         public bool Equals(CommandLineSetting obj)

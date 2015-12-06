@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using RemoteControlRestService;
+using RemoteControlRestService.Infrastracture;
 using System;
 
 namespace RemoteControlRestServiceTests

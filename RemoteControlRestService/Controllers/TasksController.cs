@@ -1,36 +1,57 @@
-﻿using System.Collections.Generic;
+﻿using RemoteControlRestService.Infrastracture;
+using RemoteControlRestService.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 
 namespace RemoteControlRestService.Controllers
 {
     public class TasksController : ApiController
     {
+        readonly IList<Task> TaskCollection;
 
-        // GET api/values 
-        public IEnumerable<string> Get()
+        public TasksController()
         {
-            return new string[] { "value1", "value2" };
+            var provider = new TaskCollectionFactory();
+            TaskCollection = provider.GetCollection();
         }
 
-        // GET api/values/5
-        public string Get(int id)
+        public IEnumerable<Task> Get()
         {
-            return "value";
+            return TaskCollection;
         }
 
-        // POST api/values 
-        public void Post([FromBody]string value)
+        public Task Get(Guid id)
         {
+            return TaskCollection.FirstOrDefault(x => x.Id == id);
         }
 
-        // PUT api/values/5 
-        public void Put(int id, [FromBody]string value)
+        public void Post([FromBody]Task value)
         {
+            if (value == null) throw new ArgumentNullException();
+            if ()
+
+            TaskCollection.Add(value);
         }
 
-        // DELETE api/values/5 
-        public void Delete(int id)
+        public void Put(Guid id, [FromBody]Task value)
         {
-        } 
+            if (value.Id != id) throw new ArgumentException("Входные параметры Id и value.Id не совпадают!");
+
+            Remove(id);
+            TaskCollection.Add(value);
+        }
+
+        public void Delete(Guid id)
+        {
+            Remove(id);
+        }
+
+        void Remove(Guid id)
+        {
+            var toRemove = Get(id);
+            TaskCollection.Remove(toRemove);
+        }
     }
 }
