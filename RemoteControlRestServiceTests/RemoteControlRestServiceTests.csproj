@@ -63,9 +63,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLineSettingProviderTests.cs" />
+    <Compile Include="CommandLineSettingTests.cs" />
     <Compile Include="ExtentionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TaskControllerTests.cs" />
+    <Compile Include="TaskCollectionFactoryTests.cs" />
+    <Compile Include="TasksControllerTests.cs" />
+    <Compile Include="TaskTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

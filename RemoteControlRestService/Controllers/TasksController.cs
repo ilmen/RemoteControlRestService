@@ -30,27 +30,23 @@ namespace RemoteControlRestService.Controllers
         public void Post([FromBody]Task value)
         {
             if (value == null) throw new ArgumentNullException();
-            if ()
 
             TaskCollection.Add(value);
         }
 
         public void Put(Guid id, [FromBody]Task value)
         {
+            if (value == null) throw new ArgumentNullException();
             if (value.Id != id) throw new ArgumentException("Входные параметры Id и value.Id не совпадают!");
 
-            Remove(id);
+            var toRemove = TaskCollection.Single(x => x.Id == id);
+            TaskCollection.Remove(toRemove);
             TaskCollection.Add(value);
         }
 
         public void Delete(Guid id)
         {
-            Remove(id);
-        }
-
-        void Remove(Guid id)
-        {
-            var toRemove = Get(id);
+            var toRemove = TaskCollection.FirstOrDefault(x => x.Id == id);
             TaskCollection.Remove(toRemove);
         }
     }
