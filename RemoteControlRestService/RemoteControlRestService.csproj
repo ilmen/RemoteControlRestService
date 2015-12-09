@@ -78,6 +78,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastracture\ConfigurationException.cs" />
+    <Compile Include="Infrastracture\Validation\FilePathValidator.cs" />
+    <Compile Include="Infrastracture\Validation\IValidator.cs" />
+    <Compile Include="Infrastracture\Validation\IValidate.cs" />
+    <Compile Include="Infrastracture\Validation\StringLengthValidator.cs" />
+    <Compile Include="Infrastracture\SystemTime.cs" />
+    <Compile Include="Infrastracture\TaskToRunProvider.cs" />
+    <Compile Include="Infrastracture\Validation\ValidResult.cs" />
     <Compile Include="Models\Task.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Infrastracture\Extentions.cs" />
