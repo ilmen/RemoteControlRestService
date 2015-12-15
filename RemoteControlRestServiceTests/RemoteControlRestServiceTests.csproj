@@ -69,6 +69,8 @@
     <Compile Include="TaskCollectionFactoryTests.cs" />
     <Compile Include="TasksControllerTests.cs" />
     <Compile Include="TaskTests.cs" />
+    <Compile Include="TaskValidatorTests.cs" />
+    <Compile Include="ValidateTestHelper.cs" />
     <Compile Include="ValidResultTests.cs" />
   </ItemGroup>
   <ItemGroup>

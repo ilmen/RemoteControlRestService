@@ -1,6 +1,6 @@
 ﻿using Microsoft.Owin.Hosting;
 using RemoteControlRestService.Infrastracture;
-using RemoteControlRestService.Models;
+using RemoteControlRestService.Infrastracture.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -15,7 +15,9 @@ namespace RemoteControlRestService
             var settings = provider.GetSettings(args);
             var baseAddress = String.Format("http://localhost:{0}/", settings.Port);
 
-            TaskCollectionFactory.SetCollection(new List<Task>());
+            var tasks = new List<Task>();
+            TaskCollectionFactory.SetCollection(tasks);
+
 
             // Start OWIN host 
             using (WebApp.Start<Startup>(url: baseAddress))

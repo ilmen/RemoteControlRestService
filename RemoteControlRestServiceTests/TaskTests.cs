@@ -1,7 +1,7 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
+using RemoteControlRestService.Infrastracture.Tasks;
 using RemoteControlRestService.Infrastracture.Validation;
-using RemoteControlRestService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,6 @@ namespace RemoteControlRestServiceTests
     [TestFixture]
     public class TaskTests
     {
-
         [Test]
         public void Equals_NullObjectEquals_ReturnsFalse()
         {
@@ -75,97 +74,6 @@ namespace RemoteControlRestServiceTests
             var defaultTask = new Task();
     
             defaultTask.GetHashCode();
-        }
-
-        [Test]
-        public void IsValid_Always_UseDescriptionValidator()
-        {
-            const string DESCRIPTION = "some_description";
-            var task = new Task()
-            {
-                Id = new Guid("{15C97E19-48A9-451F-8F66-549505B41268}"),
-                Description = DESCRIPTION
-            };
-            var invalidResult = ValidResult.GetInvalidResult("some description validation error");
-            var mock = Substitute.For<IValidator<string>>();
-            mock.Validate(DESCRIPTION).Returns(invalidResult);
-            task.DescriptionValidator = mock;
-
-            var result = task.IsValid();
-
-            mock.ReceivedWithAnyArgs().Validate(DESCRIPTION);
-            Assert.AreEqual(invalidResult, result);
-        }
-
-        [Test]
-        public void IsValid_Always_UseFilePathValidator()
-        {
-            const string FILEPATH = "somefilename.type";
-            var task = new Task()
-            {
-                Id = new Guid("{15C97E19-48A9-451F-8F66-549505B41268}"),
-                ScriptFilePath = FILEPATH
-            };
-            var invalidResult = ValidResult.GetInvalidResult("some file path validation error");
-            var mock = Substitute.For<IValidator<string>>();
-            mock.Validate(FILEPATH).Returns(invalidResult);
-            task.FilePathValidator = mock;
-
-            var result = task.IsValid();
-
-            mock.ReceivedWithAnyArgs().Validate(FILEPATH);
-            Assert.AreEqual(invalidResult, result);
-        }
-
-        [Test]
-        public void IsValid_WrongId_ReturnsInvalidResult()
-        {
-            var task = new Task();
-
-            var result = task.IsValid();
-
-            Assert.IsFalse(result.IsValid);
-            StringAssert.Contains("Не задан идентификатор", result.ErrorMessage);
-        }
-
-        [Test]
-        public void IsValid_WrongTimes_ReturnsInvalidResult()
-        {
-            var task = new Task()
-            {
-                Id = new Guid("{15C97E19-48A9-451F-8F66-549505B41268}"),
-                CreateTime = DateTime.MaxValue,
-                RunTime = DateTime.MaxValue.Subtract(TimeSpan.FromSeconds(1))
-            };
-
-            var result = task.IsValid();
-
-            Assert.IsFalse(result.IsValid);
-            StringAssert.Contains("Время запуска задачи не может быть меньше времени создания", result.ErrorMessage);
-        }
-
-        [Test]
-        public void IsValid_AllValid_ReturnsValidResult()
-        {
-            const string DESCRIPTION = "some desc";
-            const string FILEPARH = "some path";
-            var ONE_TIME = new DateTime(2015, 12, 9);
-            var task = new Task()
-            {
-                Id = new Guid("{15C97E19-48A9-451F-8F66-549505B41268}"),
-                CreateTime = ONE_TIME,
-                RunTime = ONE_TIME,
-                ScriptFilePath = FILEPARH,
-                Description = DESCRIPTION
-            };
-            var stub = Substitute.For<IValidator<string>>();
-            stub.Validate("any string").ReturnsForAnyArgs(ValidResult.Valid);
-            task.DescriptionValidator = stub;
-            task.FilePathValidator = stub;
-
-            var result = task.IsValid();
-
-            Assert.AreEqual(ValidResult.Valid, result);
         }
     }
 }

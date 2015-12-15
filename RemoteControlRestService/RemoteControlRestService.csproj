@@ -77,19 +77,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastracture\Commands\Command.cs" />
+    <Compile Include="Infrastracture\Commands\CommandCollectionFactory.cs" />
     <Compile Include="Infrastracture\ConfigurationException.cs" />
+    <Compile Include="Infrastracture\Validation\CommandValidator.cs" />
     <Compile Include="Infrastracture\Validation\FilePathValidator.cs" />
     <Compile Include="Infrastracture\Validation\IValidator.cs" />
-    <Compile Include="Infrastracture\Validation\IValidate.cs" />
+    <Compile Include="Infrastracture\Validation\IValidated.cs" />
     <Compile Include="Infrastracture\Validation\StringLengthValidator.cs" />
     <Compile Include="Infrastracture\SystemTime.cs" />
-    <Compile Include="Infrastracture\TaskToRunProvider.cs" />
+    <Compile Include="Infrastracture\Validation\TaskValidator.cs" />
     <Compile Include="Infrastracture\Validation\ValidResult.cs" />
-    <Compile Include="Models\Task.cs" />
+    <Compile Include="Infrastracture\Tasks\Task.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Infrastracture\Extentions.cs" />
     <Compile Include="Infrastracture\CommandLineSettingProvider.cs" />
-    <Compile Include="Infrastracture\TaskCollectionFactory.cs" />
+    <Compile Include="Infrastracture\Tasks\TaskCollectionFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

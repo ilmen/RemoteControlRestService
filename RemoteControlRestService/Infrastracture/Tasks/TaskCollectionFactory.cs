@@ -1,7 +1,6 @@
-﻿using RemoteControlRestService.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace RemoteControlRestService.Infrastracture
+namespace RemoteControlRestService.Infrastracture.Tasks
 {
     public class TaskCollectionFactory
     {

@@ -22,6 +22,7 @@ namespace RemoteControlRestService.Infrastracture.Validation
         public bool IsValid
         { get; private set; }
 
+        // TODO: Вместо текстового поля сделать расширяемый список ErrorMessages
         public string ErrorMessage
         { get; private set; }
         #endregion
@@ -41,11 +42,16 @@ namespace RemoteControlRestService.Infrastracture.Validation
         {
             if (!this.IsValid) throw new CheckValidException(this.ErrorMessage);
         }
+
+        public override string ToString()
+        {
+            return this.GetJsonView();
+        }
     }
 
     public class CheckValidException : Exception
     {
-        public CheckValidException() : base() { }
+        //public CheckValidException() : base() { }
 
         public CheckValidException(string message) : base(message) { }
     }
