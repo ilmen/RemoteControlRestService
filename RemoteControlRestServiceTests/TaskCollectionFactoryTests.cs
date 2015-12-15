@@ -16,7 +16,7 @@ namespace RemoteControlRestServiceTests
         {
             return new Command()
             {
-                Index = 1,
+                Id = 1,
                 FilePath = "stub.bat",
                 Name = "Stub"
             };

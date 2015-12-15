@@ -77,10 +77,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\CommandsController.cs" />
     <Compile Include="Infrastracture\Commands\Command.cs" />
     <Compile Include="Infrastracture\Commands\CommandCollectionFactory.cs" />
     <Compile Include="Infrastracture\ConfigurationException.cs" />
-    <Compile Include="Infrastracture\Validation\CommandValidator.cs" />
+    <Compile Include="Infrastracture\Validation\CommandCollectionValidator.cs" />
     <Compile Include="Infrastracture\Validation\FilePathValidator.cs" />
     <Compile Include="Infrastracture\Validation\IValidator.cs" />
     <Compile Include="Infrastracture\Validation\IValidated.cs" />

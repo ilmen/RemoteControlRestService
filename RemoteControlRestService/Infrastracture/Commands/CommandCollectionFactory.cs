@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemoteControlRestService.Infrastracture.Validation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,25 +7,44 @@ namespace RemoteControlRestService.Infrastracture.Commands
 {
     public class CommandCollectionFactory
     {
-        public IEnumerable<Command> GetCommands()
+        IValidator<IEnumerable<Command>>  Validator;
+
+        public CommandCollectionFactory() : this(new CommandCollectionValidator()) { }
+
+        public CommandCollectionFactory(IValidator<IEnumerable<Command>> validator)
+        {
+            Validator = validator;
+        }
+
+        public IEnumerable<Command> GetCollection()
         {
             var files = GetBatFiles();
 
-            var commands = files
+            var rawCommands = files
                 .Select(x => new
                 {
                     File = x,
                     Name = GetReadableCommandName(x)
                 });
 
-            return commands
+            var commands = rawCommands
                 .Select((x, index) => new Command()
                 {
-                    Index = index + 1,
+                    Id = index + 1,
                     FilePath = x.File,
                     Name = x.Name
                 })
-                .ToList();
+                .ToArray();
+
+            ThrownIfNotValid(commands);
+
+            return commands;
+        }
+
+        void ThrownIfNotValid(IEnumerable<Command> commands)
+        {
+            var validateResult = Validator.Validate(commands);
+            if (validateResult != ValidResult.Valid) throw new ConfigurationException("Ошибка формирования команд! Одна или несколько команд не прошли валидацию! Об ошибке: " + validateResult.ToString());
         }
 
         public string GetReadableCommandName(string fileName)

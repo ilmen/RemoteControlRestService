@@ -1,4 +1,4 @@
-﻿using RemoteControlRestService.Infrastracture;
+﻿using RemoteControlRestService.Infrastracture.Commands;
 using RemoteControlRestService.Infrastracture.Tasks;
 using RemoteControlRestService.Infrastracture.Validation;
 using System;
@@ -7,13 +7,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Description;
 
 namespace RemoteControlRestService.Controllers
 {
     public class TasksController : ApiController
     {
         readonly IList<Task> TaskCollection;
+        readonly IEnumerable<Command> CommandCollection;
         readonly IValidator<Task> Validator;
 
         public TasksController() : this(new TaskValidator()) { }
@@ -22,8 +22,11 @@ namespace RemoteControlRestService.Controllers
         {
             Validator = validator;
 
-            var provider = new TaskCollectionFactory();
-            TaskCollection = provider.GetCollection();
+            var taskProvider = new TaskCollectionFactory();
+            TaskCollection = taskProvider.GetCollection();
+
+            var commandProvider = new CommandCollectionFactory();
+            CommandCollection = commandProvider.GetCollection();
         }
 
         public IEnumerable<Task> Get()
@@ -33,6 +36,7 @@ namespace RemoteControlRestService.Controllers
 
         public Task Get(Guid id)
         {
+            // TODO: если элемент с таким Id не существует - возвращать ошибку 404
             return TaskCollection.FirstOrDefault(x => x.Id == id);
         }
 
@@ -65,6 +69,9 @@ namespace RemoteControlRestService.Controllers
         {
             if (value == null) throw new ArgumentNullException("Получена неинициализированная задача!");
             Validator.Validate(value).ThrowExceptionIfNotValid();
+
+            var cmd = CommandCollection.FirstOrDefault(x => x.Id == value.Cmd.Id);
+            if (cmd == null) throw new ArgumentException();
         }
     }
 }
