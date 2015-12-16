@@ -1,20 +1,26 @@
-﻿using RemoteControlRestService.Infrastracture.Commands;
+﻿using Newtonsoft.Json;
+using RemoteControlRestService.Infrastracture.Commands;
 using System;
+using System.Runtime.Serialization;
 
 namespace RemoteControlRestService.Infrastracture.Tasks
 {
-    [Serializable]
+    [DataContract]
     public class Task
     {
+        [DataMember]
         public Guid Id
         { get; set; }
 
+        [DataMember]
         public DateTime CreateTime
         { get; set; }
 
+        [DataMember]
         public DateTime RunTime
         { get; set; }
 
+        [DataMember]
         public Command Cmd
         { get; set; }
 

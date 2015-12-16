@@ -17,6 +17,10 @@ namespace RemoteControlRestService
                 defaults: new { id = RouteParameter.Optional }
             );
 
+            // настраиваем JSON сериализацию
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
+            config.Formatters.JsonFormatter.Indent = true;
+
             appBuilder.UseWebApi(config);
         } 
     }

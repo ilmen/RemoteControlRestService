@@ -43,14 +43,15 @@ namespace RemoteControlRestService.Controllers
         public void Post([FromBody]Task value)
         {
             ValidateValue(value);
+            ReplaceCommand(value);
             
             TaskCollection.Add(value);
         }
 
         public void Put(Guid id, [FromBody]Task value)
         {
-            ValidateValue(value);
-            if (value.Id != id) throw new ArgumentException("Входные параметры Id и value.Id не совпадают!");
+            ValidateValue(id, value);
+            ReplaceCommand(value);
 
             var toRemove = TaskCollection.Single(x => x.Id == id);
             TaskCollection.Remove(toRemove);
@@ -70,8 +71,19 @@ namespace RemoteControlRestService.Controllers
             if (value == null) throw new ArgumentNullException("Получена неинициализированная задача!");
             Validator.Validate(value).ThrowExceptionIfNotValid();
 
-            var cmd = CommandCollection.FirstOrDefault(x => x.Id == value.Cmd.Id);
+            var cmd = CommandCollection.SingleOrDefault(x => x.Id == value.Cmd.Id);
             if (cmd == null) throw new ArgumentException();
+        }
+
+        void ValidateValue(Guid id, Task value)
+        {
+            ValidateValue(value);
+            if (value.Id != id) throw new ArgumentException("Входные параметры Id и value.Id не совпадают!");
+        }
+
+        void ReplaceCommand(Task value)
+        {
+            value.Cmd = CommandCollection.Single(x => x.Id == value.Cmd.Id);
         }
     }
 }

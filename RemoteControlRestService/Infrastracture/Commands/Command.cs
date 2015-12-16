@@ -1,9 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Runtime.Serialization;
 
 namespace RemoteControlRestService.Infrastracture.Commands
 {
+    [DataContract]
     public class Command
     {
+        [DataMember]
         public int Id
         { get; set; }
 
@@ -11,6 +15,7 @@ namespace RemoteControlRestService.Infrastracture.Commands
         public string FilePath
         { get; set; }
 
+        [DataMember]
         public string Name
         { get; set; }
 
