@@ -187,11 +187,11 @@ namespace RemoteControlRestServiceTests
         {
             var TASK_ID = new Guid("{866A4D3C-71C3-4AE4-B4EA-EBA0855EFCD6}");
             var OTHER_TASK_ID = new Guid("{005541BD-F397-4DF2-8C46-C886AA02D5E5}");
-            var tasks = new List<Task>() { CreateTask(TASK_ID) };
-            TaskCollectionFactory.SetCollection(tasks);
+            var task = CreateTask(TASK_ID);
+            TaskCollectionFactory.SetCollection(new List<Task>() { task });
             var controller = GetController();
 
-            Assert.Catch<ArgumentException>(() => controller.Put(OTHER_TASK_ID, Arg.Any<Task>()));
+            Assert.Catch<ArgumentException>(() => controller.Put(OTHER_TASK_ID, task));
         }
 
         [Test]

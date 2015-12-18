@@ -13,10 +13,16 @@ namespace RemoteControlRestServiceTests
     [TestFixture]
     public class TaskValidatorTests
     {
+        IEnumerable<Command> GetStubCommandCollection()
+        {
+            return new Command[0];
+        }
+
         [Test]
         public void Validate_WrongId_ReturnsInvalidResult()
         {
-            var validator = new TaskValidator();
+            var stubCollection = GetStubCommandCollection();
+            var validator = new TaskValidator(stubCollection);
             var task = new Task() { Id = Guid.Empty };
 
             var result = validator.Validate(task);
@@ -28,7 +34,8 @@ namespace RemoteControlRestServiceTests
         [Test]
         public void Validate_WrongTimes_ReturnsInvalidResult()
         {
-            var validator = new TaskValidator();
+            var stubCollection = GetStubCommandCollection();
+            var validator = new TaskValidator(stubCollection);
             var task = new Task()
             {
                 Id = new Guid("{15C97E19-48A9-451F-8F66-549505B41268}"),
@@ -45,7 +52,8 @@ namespace RemoteControlRestServiceTests
         [Test]
         public void Validate_WrongCmd_ReturnsInvalidResult()
         {
-            var validator = new TaskValidator();
+            var stubCollection = GetStubCommandCollection();
+            var validator = new TaskValidator(stubCollection);
             var task = new Task()
             {
                 Id = new Guid("{15C97E19-48A9-451F-8F66-549505B41268}"),
@@ -61,14 +69,15 @@ namespace RemoteControlRestServiceTests
         [Test]
         public void Validate_AllValid_ReturnsValidResult()
         {
-            var validator = new TaskValidator();
+            var cmd = new Command() { Id = 1, FilePath = "SOMEFILE.bat", Name = "SOME_NAME" };
+            var validator = new TaskValidator(new List<Command>() { cmd });
             var ONE_TIME = new DateTime(2015, 12, 9);
             var task = new Task()
             {
                 Id = new Guid("{15C97E19-48A9-451F-8F66-549505B41268}"),
                 CreateTime = ONE_TIME,
                 RunTime = ONE_TIME,
-                Cmd = new Command()
+                Cmd = cmd
             };
 
             var result = validator.Validate(task);

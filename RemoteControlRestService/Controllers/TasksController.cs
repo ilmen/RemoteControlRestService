@@ -12,16 +12,25 @@ namespace RemoteControlRestService.Controllers
 {
     public class TasksController : ApiController
     {
-        readonly IList<Task> TaskCollection;
-        readonly IEnumerable<Command> CommandCollection;
-        readonly IValidator<Task> Validator;
+        IList<Task> TaskCollection;
+        IEnumerable<Command> CommandCollection;
+        IValidator<Task> Validator;
 
-        public TasksController() : this(new TaskValidator()) { }
+        public TasksController()
+        {
+            Create();
+
+            Validator = new TaskValidator(CommandCollection);
+        }
 
         public TasksController(IValidator<Task> validator)
+            : this()
         {
             Validator = validator;
-
+        }
+        
+        void Create()
+        {
             var taskProvider = new TaskCollectionFactory();
             TaskCollection = taskProvider.GetCollection();
 
@@ -50,7 +59,8 @@ namespace RemoteControlRestService.Controllers
 
         public void Put(Guid id, [FromBody]Task value)
         {
-            ValidateValue(id, value);
+            ValidateValue(value);
+            if (value.Id != id) throw new ArgumentException("Входные параметры Id и value.Id не совпадают!");
             ReplaceCommand(value);
 
             var toRemove = TaskCollection.Single(x => x.Id == id);
@@ -68,17 +78,9 @@ namespace RemoteControlRestService.Controllers
 
         void ValidateValue(Task value)
         {
-            if (value == null) throw new ArgumentNullException("Получена неинициализированная задача!");
+            // TODO: неравество задачи Null - это ограничение алгоритмов TasksController. Остальные проверки - ответвенность валидатора, ответственность которого - проверять логическую корректность задачи
+            if (value == null) throw new ArgumentNullException("Команда не может быть равна Null!");
             Validator.Validate(value).ThrowExceptionIfNotValid();
-
-            var cmd = CommandCollection.SingleOrDefault(x => x.Id == value.Cmd.Id);
-            if (cmd == null) throw new ArgumentException();
-        }
-
-        void ValidateValue(Guid id, Task value)
-        {
-            ValidateValue(value);
-            if (value.Id != id) throw new ArgumentException("Входные параметры Id и value.Id не совпадают!");
         }
 
         void ReplaceCommand(Task value)
