@@ -40,22 +40,23 @@ namespace RemoteControlRestService
 
         static IList<Task> GetDefaultTaskCollection()
         {
-            var cmdType = "testcommand";
-            var factory = new RunnableTaskFactory();
-            var command = factory.Create(cmdType);
+            return new List<Task>();
 
-            return new List<Task>()
-                {
-                    new Task()
-                    {
-                        Id = new Guid("{D713368A-73D0-4054-82FD-BA6F95586FE9}"),
-                        CreateTime = DateTime.MinValue,
-                        RunTime = DateTime.MinValue,
-                        //CommandType = cmdType,
-                        //RunnableTask = command,
-                        CommandType = "echo"
-                    }
-                };
+            //var cmdType = "testcommand";
+            //var factory = new RunnableTaskFactory();
+            //var command = factory.Create(cmdType);
+
+            //return new List<Task>()
+            //    {
+            //        new Task()
+            //        {
+            //            Id = new Guid("{D713368A-73D0-4054-82FD-BA6F95586FE9}"),
+            //            CreateTime = DateTime.MinValue,
+            //            RunTime = DateTime.MinValue,
+            //            CommandType = cmdType,
+            //            RunnableTask = command,
+            //        }
+            //    };
         }
 
         private static void TestRestService(string url)
