@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
-using RemoteControlRestService.Infrastracture.Commands;
+﻿using RemoteControlRestService.Classes.RunnableTasks;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
 
-namespace RemoteControlRestService.Infrastracture.Tasks
+namespace RemoteControlRestService.Classes
 {
     [DataContract]
     public class Task
@@ -21,7 +23,10 @@ namespace RemoteControlRestService.Infrastracture.Tasks
         { get; set; }
 
         [DataMember]
-        public Command Cmd
+        public string CommandType
+        { get; set; }
+
+        public IRunnableTask RunnableTask
         { get; set; }
 
         #region Equals and = overriding
@@ -40,7 +45,8 @@ namespace RemoteControlRestService.Infrastracture.Tasks
                 this.Id == obj.Id &&
                 this.CreateTime == obj.CreateTime &&
                 this.RunTime == obj.RunTime &&
-                this.Cmd == obj.Cmd;
+                this.CommandType == obj.CommandType &&
+                this.RunnableTask == obj.RunnableTask;
         }
 
         public override int GetHashCode()
@@ -49,7 +55,8 @@ namespace RemoteControlRestService.Infrastracture.Tasks
                 Id.GetHashCode() +
                 CreateTime.GetHashCode() +
                 RunTime.GetHashCode() +
-                (Cmd == null ? 0 : Cmd.GetHashCode());
+                (CommandType == null ? 0 : CommandType.GetHashCode()) +
+                (RunnableTask == null ? 0 : RunnableTask.GetHashCode());
         }
         #endregion
 

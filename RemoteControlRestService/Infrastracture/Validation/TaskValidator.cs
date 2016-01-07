@@ -1,5 +1,4 @@
-﻿using RemoteControlRestService.Infrastracture.Commands;
-using RemoteControlRestService.Infrastracture.Tasks;
+﻿using RemoteControlRestService.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +7,12 @@ namespace RemoteControlRestService.Infrastracture.Validation
 {
     public class TaskValidator : IValidator<Task>
     {
-        IEnumerable<Command> CommandCollection;
+        IEnumerable<string> CommandCollection;
 
-        public TaskValidator(IEnumerable<Command> commandCollection)
+        public TaskValidator()
         {
-            CommandCollection = commandCollection;
+            var factory = new CommandCollectionFactory();
+            CommandCollection = factory.GetCollection();
         }
 
         public ValidResult Validate(Task value)
@@ -23,10 +23,7 @@ namespace RemoteControlRestService.Infrastracture.Validation
 
             if (value.CreateTime > value.RunTime) return ValidResult.GetInvalidResult("Время запуска задачи не может быть меньше времени создания задачи!");
 
-            if (value.Cmd == null) return ValidResult.GetInvalidResult("Поле Cmd не задана!");
-
-            var cmd = CommandCollection.SingleOrDefault(x => x.Id == value.Cmd.Id);
-            if (cmd == null) throw new ArgumentException("Команда не найдена!");
+            if (!CommandCollection.Contains(value.CommandType)) return ValidResult.GetInvalidResult("Некорректное значение поля CmdType!");
 
             return ValidResult.Valid;
         }

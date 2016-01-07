@@ -1,41 +1,41 @@
-﻿using RemoteControlRestService.Infrastracture.Commands;
-using RemoteControlRestService.Infrastracture.Validation;
+﻿using RemoteControlRestService.Infrastracture.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using RemoteControlRestService.Classes;
 
 namespace RemoteControlRestService.Controllers
 {
     public class CommandsController : ApiController
     {
-        readonly IEnumerable<Command> CommandCollection;
+        readonly IEnumerable<string> CommandCollection;
 
         public CommandsController()
         {
-            var provider = new CommandCollectionFactory();
-            CommandCollection = provider.GetCollection();
+            var factory = new CommandCollectionFactory();
+            CommandCollection = factory.GetCollection();
         }
 
-        public IEnumerable<Command> Get()
+        public IEnumerable<string> Get()
         {
             return CommandCollection;
         }
 
-        public Command Get(int id)
+        public string Get(int id)
         {
             // TODO: если элемент с таким Id не существует - возвращать ошибку 404
-            return CommandCollection.FirstOrDefault(x => x.Id == id);
+            return CommandCollection.Skip(id).FirstOrDefault();
         }
 
-        public HttpResponseMessage Post([FromBody]Command value)
+        public HttpResponseMessage Post([FromBody]string value)
         {
             return GetReadOnlyCollectionError();
         }
 
-        public HttpResponseMessage Put(int id, [FromBody]Command value)
+        public HttpResponseMessage Put(int id, [FromBody]string value)
         {
             return GetReadOnlyCollectionError();
         }

@@ -78,25 +78,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\RunnableTasks\BatchCommand.cs" />
+    <Compile Include="Classes\CommandCollectionFactory.cs" />
+    <Compile Include="Classes\TaskCollectionFactory.cs" />
+    <Compile Include="Infrastracture\Enums.cs" />
+    <Compile Include="Classes\RunnableTasks\IRunnableTask.cs" />
+    <Compile Include="Classes\Task.cs" />
+    <Compile Include="Classes\RunnableTasks\RunnableTaskFactory.cs" />
+    <Compile Include="Classes\RunnableTasks\TestCommand.cs" />
     <Compile Include="Controllers\CommandsController.cs" />
-    <Compile Include="Infrastracture\Commands\Command.cs" />
-    <Compile Include="Infrastracture\Commands\CommandCollectionFactory.cs" />
-    <Compile Include="Infrastracture\ConfigurationException.cs" />
-    <Compile Include="Infrastracture\Sheduler\RunnableTask.cs" />
-    <Compile Include="Infrastracture\Sheduler\TaskWorker.cs" />
-    <Compile Include="Infrastracture\Validation\CommandCollectionValidator.cs" />
-    <Compile Include="Infrastracture\Validation\FilePathValidator.cs" />
-    <Compile Include="Infrastracture\Validation\IValidator.cs" />
-    <Compile Include="Infrastracture\Validation\IValidated.cs" />
-    <Compile Include="Infrastracture\Validation\StringLengthValidator.cs" />
+    <Compile Include="Classes\ConfigurationException.cs" />
     <Compile Include="Infrastracture\SystemTime.cs" />
-    <Compile Include="Infrastracture\Validation\TaskValidator.cs" />
-    <Compile Include="Infrastracture\Validation\ValidResult.cs" />
-    <Compile Include="Infrastracture\Tasks\Task.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Infrastracture\Extentions.cs" />
-    <Compile Include="Infrastracture\CommandLineSettingProvider.cs" />
-    <Compile Include="Infrastracture\Tasks\TaskCollectionFactory.cs" />
+    <Compile Include="Classes\CommandLineSettingProvider.cs" />
+    <Compile Include="Infrastracture\Validation\CommandCollectionValidator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Infrastracture\Validation\FilePathValidator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Infrastracture\Validation\IValidated.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Infrastracture\Validation\IValidator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Infrastracture\Validation\StringLengthValidator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Infrastracture\Validation\TaskValidator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Infrastracture\Validation\ValidResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemoteControlRestService.Infrastracture
+namespace RemoteControlRestService.Classes
 {
     public class CommandLineSettingProvider
     {
