@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -9,8 +10,14 @@ namespace RemoteControlRestService.Classes.RunnableTasks
     {
         string BatchFilePath;
 
+        enRunnableTaskStatus status = enRunnableTaskStatus.Added;
         public enRunnableTaskStatus Status
-        { get; set; }
+        {
+            get
+            {
+                return status;
+            }
+        }
 
         public BatchCommand(string batchFilePath)
         {
@@ -19,12 +26,33 @@ namespace RemoteControlRestService.Classes.RunnableTasks
 
         public void Run()
         {
-            throw new NotImplementedException();
+            try
+            {
+                status = enRunnableTaskStatus.Running;
+
+                ExecuteCommand(this.BatchFilePath);
+
+                status = enRunnableTaskStatus.Completed;
+            }
+            catch (Exception ex)
+            {
+                status = enRunnableTaskStatus.Error;
+            }
         }
 
-        public void Stop()
+        static void ExecuteCommand(string filePath)
         {
-            // не поддерживаеться
+            ProcessStartInfo processInfo;
+            Process process;
+
+            processInfo = new ProcessStartInfo(filePath);
+            processInfo.CreateNoWindow = true;
+            processInfo.UseShellExecute = false;
+
+            process = Process.Start(processInfo);
+            // TODO: выход по таймауту реализовать
+            process.WaitForExit();
+            process.Close();
         }
     }
 }

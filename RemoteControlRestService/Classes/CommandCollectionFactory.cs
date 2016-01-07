@@ -11,7 +11,7 @@ namespace RemoteControlRestService.Classes
         public IEnumerable<string> GetCollection()
         {
             // TODO: реализовать
-            return new string[] { "testcommand", "cmd1", "cmd2" };
+            return new string[] { "testcommand", "hibernate", "restart", "shutdown", "echo" };
         }
     }
 }

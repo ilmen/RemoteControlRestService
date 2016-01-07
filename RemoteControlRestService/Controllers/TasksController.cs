@@ -72,7 +72,7 @@ namespace RemoteControlRestService.Controllers
             // TODO: неравество задачи Null - это ограничение алгоритмов TasksController. Остальные проверки - ответвенность валидатора - проверять логическую корректность задачи
             if (value == null) throw new ArgumentNullException("Команда не может быть равна Null!");
             Validator.Validate(value).ThrowExceptionIfNotValid();
-            if (value.RunnableTask != null) throw new ArgumentException("Конкретный реализация задачи формируется только переред вызовом!");
+            if (value.RunnableTask != null) throw new ArgumentException("Конкретный реализация задачи формируется только переред первым вызовом!");
         }
     }
 }

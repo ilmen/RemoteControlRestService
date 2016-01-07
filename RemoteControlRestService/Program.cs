@@ -19,10 +19,11 @@ namespace RemoteControlRestService
             var tasks = GetDefaultTaskCollection();
             TaskCollectionFactory.SetCollection(tasks);
 
-            //var worker = new TaskWorker();
-            //var timer = new System.Timers.Timer(30000);
-            //timer.Elapsed += (s,e) => worker.Run();
-            //timer.Start();
+            var tasksToRunProvider = new TasksToRunProvider(tasks);
+            var worker = new TaskRunner(tasksToRunProvider);
+            var timer = new System.Timers.Timer(30000);
+            timer.Elapsed += (s, e) => worker.TryStartNewTask();
+            timer.Start();
 
             // Start OWIN host 
             using (WebApp.Start<Startup>(url: baseAddress))
@@ -50,8 +51,9 @@ namespace RemoteControlRestService
                         Id = new Guid("{D713368A-73D0-4054-82FD-BA6F95586FE9}"),
                         CreateTime = DateTime.MinValue,
                         RunTime = DateTime.MinValue,
-                        CommandType = cmdType,
-                        RunnableTask = command,
+                        //CommandType = cmdType,
+                        //RunnableTask = command,
+                        CommandType = "echo"
                     }
                 };
         }
