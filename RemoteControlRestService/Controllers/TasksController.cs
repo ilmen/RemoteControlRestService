@@ -1,4 +1,5 @@
 ﻿using RemoteControlRestService.Infrastracture.Commands;
+using RemoteControlRestService.Infrastracture.Sheduler;
 using RemoteControlRestService.Infrastracture.Tasks;
 using RemoteControlRestService.Infrastracture.Validation;
 using System;
@@ -12,7 +13,8 @@ namespace RemoteControlRestService.Controllers
 {
     public class TasksController : ApiController
     {
-        IList<Task> TaskCollection;
+        static IList<Task> TaskCollection;
+        public static IList<RunnableTask> RunTaskCollection;
         IEnumerable<Command> CommandCollection;
         IValidator<Task> Validator;
 
@@ -33,9 +35,15 @@ namespace RemoteControlRestService.Controllers
         {
             var taskProvider = new TaskCollectionFactory();
             TaskCollection = taskProvider.GetCollection();
+            RunTaskCollection = TaskCollection.Select(x => new RunnableTask(x)).ToList();
 
             var commandProvider = new CommandCollectionFactory();
             CommandCollection = commandProvider.GetCollection();
+        }
+
+        public static IList<RunnableTask> GetRunnableTaskCollection()
+        {
+            return RunTaskCollection;
         }
 
         public IEnumerable<Task> Get()
@@ -55,6 +63,7 @@ namespace RemoteControlRestService.Controllers
             ReplaceCommand(value);
             
             TaskCollection.Add(value);
+            RunTaskCollection.Add(new RunnableTask(value));
         }
 
         public void Put(Guid id, [FromBody]Task value)
@@ -64,14 +73,22 @@ namespace RemoteControlRestService.Controllers
             ReplaceCommand(value);
 
             var toRemove = TaskCollection.Single(x => x.Id == id);
+            var toRemoveRunTask = RunTaskCollection.FirstOrDefault(x => x.Model == toRemove);
+            
             TaskCollection.Remove(toRemove);
+            RunTaskCollection.Remove(toRemoveRunTask);
+
             TaskCollection.Add(value);
+            RunTaskCollection.Add(new RunnableTask(value));
         }
 
         public HttpResponseMessage Delete(Guid id)
         {
             var toRemove = TaskCollection.FirstOrDefault(x => x.Id == id);
+            var toRemoveRunTask = RunTaskCollection.FirstOrDefault(x => x.Model == toRemove);
+            
             TaskCollection.Remove(toRemove);
+            RunTaskCollection.Remove(toRemoveRunTask);
 
             return new HttpResponseMessage(HttpStatusCode.OK);
         }

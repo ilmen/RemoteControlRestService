@@ -1,6 +1,7 @@
 ﻿using Microsoft.Owin.Hosting;
 using RemoteControlRestService.Infrastracture;
 using RemoteControlRestService.Infrastracture.Commands;
+using RemoteControlRestService.Infrastracture.Sheduler;
 using RemoteControlRestService.Infrastracture.Tasks;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,11 @@ namespace RemoteControlRestService
                     }
                 };
             TaskCollectionFactory.SetCollection(tasks);
+
+            var worker = new TaskWorker();
+            var timer = new System.Timers.Timer(30000);
+            timer.Elapsed += (s,e) => worker.Run();
+            timer.Start();
 
             // Start OWIN host 
             using (WebApp.Start<Startup>(url: baseAddress))

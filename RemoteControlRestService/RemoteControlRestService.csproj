@@ -83,8 +83,7 @@
     <Compile Include="Infrastracture\Commands\CommandCollectionFactory.cs" />
     <Compile Include="Infrastracture\ConfigurationException.cs" />
     <Compile Include="Infrastracture\Sheduler\RunnableTask.cs" />
-    <Compile Include="Infrastracture\Sheduler\TasksWorker.cs" />
-    <Compile Include="Infrastracture\SimpleObservableCollection.cs" />
+    <Compile Include="Infrastracture\Sheduler\TaskWorker.cs" />
     <Compile Include="Infrastracture\Validation\CommandCollectionValidator.cs" />
     <Compile Include="Infrastracture\Validation\FilePathValidator.cs" />
     <Compile Include="Infrastracture\Validation\IValidator.cs" />
