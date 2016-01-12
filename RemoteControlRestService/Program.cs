@@ -12,7 +12,7 @@ namespace RemoteControlRestService
         {
             var provider = new CommandLineSettingProvider();
             var settings = provider.GetSettings(args);
-            var baseAddress = String.Format("http://localhost:{0}/", settings.Port);
+            var baseAddress = $"http://localhost:{settings.Port}/";
 
             var tasks = GetDefaultTaskCollection();
             TaskCollectionFactory.SetCollection(tasks);
@@ -20,7 +20,7 @@ namespace RemoteControlRestService
             var tasksToRunProvider = new TasksToRunProvider(tasks);
             var worker = new TaskRunner(tasksToRunProvider);
             var timer = new System.Timers.Timer(30000);
-            timer.Elapsed += (s, e) => worker.TryStartNewTask();
+            timer.Elapsed += (s, e) => worker.TryStartNewTasks();
             timer.Start();
 
             // Start OWIN host 

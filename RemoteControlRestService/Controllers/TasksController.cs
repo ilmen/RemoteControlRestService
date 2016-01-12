@@ -52,6 +52,7 @@ namespace RemoteControlRestService.Controllers
             ValidateValue(value);
             if (value.Id != id) throw new ArgumentException("Входные параметры Id и value.Id не совпадают!");
 
+            // TODO: поменять Single на SingleOrDefault и сделать возврат ошибки, если элемент с таким id не найден
             var toRemove = TaskCollection.Single(x => x.Id == id);
             
             TaskCollection.Remove(toRemove);

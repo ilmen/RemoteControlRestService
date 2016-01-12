@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using RemoteControlRestService.Infrastracture;
+using System.Collections.Generic;
 
 namespace RemoteControlRestService.Classes
 {

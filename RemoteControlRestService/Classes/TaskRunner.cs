@@ -18,7 +18,7 @@ namespace RemoteControlRestService.Classes
             this.RTaskFactory = new RunnableTaskFactory();
         }
 
-        public void TryStartNewTask()
+        public void TryStartNewTasks()
         {
             lock (startedNowSync)
             {

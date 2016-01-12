@@ -6,11 +6,6 @@ namespace RemoteControlRestService
 {
     public static class Extentions
     {
-        //public static string Format(this string value, params object[] formatParameters)
-        //{
-        //    return String.Format(value, formatParameters);
-        //}
-
         public static bool IsNumeric(this string value)
         {
             if (String.IsNullOrEmpty(value)) return false;

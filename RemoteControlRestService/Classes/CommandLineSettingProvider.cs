@@ -32,12 +32,12 @@ namespace RemoteControlRestService.Classes
 
         void ThrowPortParametrNotFounded()
         {
-            throw new ArgumentException(String.Format("Не найден параметр \"{0}=<номер порта>\" во входных аргументах!", PORT_PARAMETER_NAME));
+            throw new ArgumentException($"Не найден параметр \"{PORT_PARAMETER_NAME}=<номер порта>\" во входных аргументах!";
         }
 
         void ThrowWrongPortException()
         {
-            throw new InvalidCastException(String.Format("Номер порта должен быть натуральным числом не больше {0}!", ushort.MaxValue));
+            throw new InvalidCastException($"Номер порта должен быть натуральным числом не больше {ushort.MaxValue}!";
         }
     }
 
