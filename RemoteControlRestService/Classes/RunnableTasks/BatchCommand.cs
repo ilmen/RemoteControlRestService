@@ -18,15 +18,15 @@ namespace RemoteControlRestService.Classes.RunnableTasks
         {
             try
             {
-                status = enRunnableTaskStatus.Running;
+                Status = enRunnableTaskStatus.Running;
 
                 ExecuteCommand(this.BatchFilePath);
 
-                status = enRunnableTaskStatus.Completed;
+                Status = enRunnableTaskStatus.Completed;
             }
             catch (Exception ex)
             {
-                status = enRunnableTaskStatus.Error;
+                Status = enRunnableTaskStatus.Error;
             }
         }
 

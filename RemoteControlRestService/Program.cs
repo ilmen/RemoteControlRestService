@@ -1,39 +1,67 @@
 ﻿using Microsoft.Owin.Hosting;
 using RemoteControlRestService.Classes;
+using RemoteControlRestService.Infrastracture;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Threading;
 
 namespace RemoteControlRestService
 {
     class Program
     {
+        static volatile int hostCounter = 0;
+
         static void Main(string[] args)
         {
-            var provider = new CommandLineSettingProvider();
-            var settings = provider.GetSettings(args);
-            var baseAddress = $"http://localhost:{settings.Port}/";
+            // getting service settings
+            var provider = new ServiceSettingsProvider();
+            var settings = provider.GetSettings();
 
+            // setting task collection
             var tasks = GetDefaultTaskCollection();
             TaskCollectionFactory.SetCollection(tasks);
 
+            // configure task runner
             var tasksToRunProvider = new TasksToRunProvider(tasks);
             var worker = new TaskRunner(tasksToRunProvider);
-            var timer = new System.Timers.Timer(30000);
+            var timerInterval = TimeSpan.FromSeconds(settings.FindNewTaskTimerInteval).TotalMilliseconds;
+            var timer = new System.Timers.Timer(timerInterval);
             timer.Elapsed += (s, e) => worker.TryStartNewTasks();
             timer.Start();
-
-            // Start OWIN host 
-            using (WebApp.Start<Startup>(url: baseAddress))
+            
+            // runnig hosts on all interfaces
+            var cts = new CancellationTokenSource();
+            foreach (var endpoint in settings.Endpoints)
             {
-                Console.WriteLine("Server started on <" + baseAddress + ">");
-
-                if (System.Diagnostics.Debugger.IsAttached) TestRestService(baseAddress + "api/tasks");
-
-                Console.WriteLine("Press <ENTER> to exit");
-                Console.ReadLine();
-                Console.WriteLine("Exiting...");
+                var baseAddress = $"http://{endpoint}/";
+                System.Threading.Tasks.Task.Run(() => StartOWINServer(baseAddress, cts.Token), cts.Token);
             }
+
+            Console.WriteLine("Press <ENTER> to exit");
+            Console.ReadLine();
+
+            // stopping all hosts
+            cts.Cancel();
+            while (hostCounter > 0)
+            {
+                Thread.Sleep(100);
+            }
+
+            Console.WriteLine("Exiting...");
+
+            #region Simple starting OWIN host
+            //// Start OWIN host 
+            //using (WebApp.Start<Startup>(url: baseAddress))
+            //{
+            //    Console.WriteLine("Server started on <" + baseAddress + ">");
+
+            //    if (System.Diagnostics.Debugger.IsAttached) TestRestService(baseAddress + "api/tasks");
+
+            //    Console.WriteLine("Press <ENTER> to exit");
+            //    Console.ReadLine();
+            //    Console.WriteLine("Exiting...");
+            //} 
+            #endregion
         }
 
         static IList<Task> GetDefaultTaskCollection()
@@ -46,7 +74,7 @@ namespace RemoteControlRestService
 
             //return new List<Task>()
             //    {
-            //        new Task()
+            //        new RemoteControlRestService.Classes.Task()
             //        {
             //            Id = new Guid("{D713368A-73D0-4054-82FD-BA6F95586FE9}"),
             //            CreateTime = DateTime.MinValue,
@@ -57,16 +85,32 @@ namespace RemoteControlRestService
             //    };
         }
 
-        private static void TestRestService(string url)
+        static void StartOWINServer(string baseUrl, CancellationToken ct)
         {
-            Console.WriteLine("Test request:");
+            using (WebApp.Start<Startup>(url: baseUrl))
+            {
+                Interlocked.Increment(ref hostCounter);
 
-            var client = new HttpClient();
+                Console.WriteLine("Server started on <" + baseUrl + ">");
 
-            var response = client.GetAsync(url).Result;
+                //if (System.Diagnostics.Debugger.IsAttached) TestRestService(baseAddress + "api/tasks");
 
-            Console.WriteLine(response);
-            Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+                ct.WaitHandle.WaitOne();
+
+                Interlocked.Decrement(ref hostCounter);
+            };
         }
+
+        //private static void TestRestService(string url)
+        //{
+        //    Console.WriteLine("Test request:");
+
+        //    var client = new HttpClient();
+
+        //    var response = client.GetAsync(url).Result;
+
+        //    Console.WriteLine(response);
+        //    Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+        //}
     }
 }

@@ -94,10 +94,12 @@
     <Compile Include="Classes\RunnableTasks\TestCommand.cs" />
     <Compile Include="Controllers\CommandsController.cs" />
     <Compile Include="Infrastracture\ConfigurationException.cs" />
+    <Compile Include="Infrastracture\ServiceSettings.cs" />
+    <Compile Include="Infrastracture\ServiceSettingsProvider.cs" />
     <Compile Include="Infrastracture\SystemTime.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Infrastracture\Extentions.cs" />
-    <Compile Include="Classes\CommandLineSettingProvider.cs" />
+    <Compile Include="Infrastracture\CommandLineSettingProvider.cs" />
     <Compile Include="Infrastracture\Validation\CommandCollectionValidator.cs">
       <SubType>Code</SubType>
     </Compile>

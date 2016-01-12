@@ -6,7 +6,7 @@ namespace RemoteControlRestService.Classes
     {
         public IEnumerable<string> GetCollection()
         {
-            // TODO: реализовать
+            // TODO: уйти от жесткого списка к загрузке содержимого из ФС или конфиг-файла
             return new string[] { "testcommand", "hibernate", "restart", "shutdown", "echo" };
         }
     }
