@@ -1,7 +1,7 @@
-﻿using System;
+﻿using RemoteControlRestService.Infrastracture;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace RemoteControlRestService.Classes
 {
@@ -21,11 +21,16 @@ namespace RemoteControlRestService.Classes
 
         public IEnumerable<Task> GetTasksToRun()
         {
-            var isNew = new Func<Task, bool>((t) => t.RunnableTask == null);
-            var isAdded = new Func<Task, bool>((t) => t.RunnableTask.Status == enRunnableTaskStatus.Added);
-            var isNeedRestart = new Func<Task, bool>((t) => t.RunnableTask.Status == enRunnableTaskStatus.Error);
+            Func<Task, bool> isReadyToRun = (t) => t.RunTime >= SystemTime.Now;
 
-            return TaskCollection.Where(t => isNew(t) || isAdded(t) || isNeedRestart(t)).ToList();
+            Func<Task, bool> isNew = (t) => t.RunnableTask == null;
+            Func<Task, bool> isAdded = (t) => t.RunnableTask?.Status == enRunnableTaskStatus.Added;
+            Func<Task, bool> isNeedRestart = (t) => t.RunnableTask?.Status == enRunnableTaskStatus.Error;
+
+            return TaskCollection
+                .Where(t => isReadyToRun(t))
+                .Where(t => isNew(t) || isAdded(t) || isNeedRestart(t))
+                .ToList();
         }
     }
 }

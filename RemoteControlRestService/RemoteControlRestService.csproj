@@ -93,7 +93,7 @@
     <Compile Include="Classes\RunnableTasks\RunnableTaskFactory.cs" />
     <Compile Include="Classes\RunnableTasks\TestCommand.cs" />
     <Compile Include="Controllers\CommandsController.cs" />
-    <Compile Include="Classes\ConfigurationException.cs" />
+    <Compile Include="Infrastracture\ConfigurationException.cs" />
     <Compile Include="Infrastracture\SystemTime.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Infrastracture\Extentions.cs" />

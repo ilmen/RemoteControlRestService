@@ -42,7 +42,8 @@ namespace RemoteControlRestService.Controllers
         public void Post([FromBody]Task value)
         {
             ValidateValue(value);
-            
+            if (TaskCollection.Select(x => x.Id).Contains(value.Id)) throw new ArgumentException("Нарушение уникальности идентификатора задачи!");
+
             TaskCollection.Add(value);
         }
 

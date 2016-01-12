@@ -1,7 +1,5 @@
 ﻿using Microsoft.Owin.Hosting;
 using RemoteControlRestService.Classes;
-using RemoteControlRestService.Classes.RunnableTasks;
-using RemoteControlRestService.Infrastracture;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

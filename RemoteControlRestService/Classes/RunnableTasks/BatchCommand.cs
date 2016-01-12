@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace RemoteControlRestService.Classes.RunnableTasks
 {
@@ -10,14 +7,7 @@ namespace RemoteControlRestService.Classes.RunnableTasks
     {
         string BatchFilePath;
 
-        enRunnableTaskStatus status = enRunnableTaskStatus.Added;
-        public enRunnableTaskStatus Status
-        {
-            get
-            {
-                return status;
-            }
-        }
+        public enRunnableTaskStatus Status { get; set; } = enRunnableTaskStatus.Added;
 
         public BatchCommand(string batchFilePath)
         {

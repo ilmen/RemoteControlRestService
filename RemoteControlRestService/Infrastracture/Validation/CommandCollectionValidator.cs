@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace RemoteControlRestService.Infrastracture.Validation
+﻿namespace RemoteControlRestService.Infrastracture.Validation
 {
     //public class CommandCollectionValidator : IValidator<IEnumerable<Command>>
     //{
