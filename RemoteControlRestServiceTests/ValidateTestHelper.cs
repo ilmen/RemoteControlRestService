@@ -1,6 +1,7 @@
-﻿using NSubstitute;
-using RemoteControlRestService.Infrastracture.Commands;
-using RemoteControlRestService.Infrastracture.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using NSubstitute;
+using RemoteControlRestService.Classes;
 using RemoteControlRestService.Infrastracture.Validation;
 
 namespace RemoteControlRestServiceTests
@@ -24,13 +25,36 @@ namespace RemoteControlRestServiceTests
             return stub;
         }
 
-        public static IValidator<Command> GetFakeCommandValidator(ValidResult expected)
-        {
-            const Command SOME_CMD = null;
-            var stub = Substitute.For<IValidator<Command>>();
-            stub.Validate(SOME_CMD).ReturnsForAnyArgs(expected);
+        //public static IValidator<Command> GetFakeCommandValidator(ValidResult expected)
+        //{
+        //    const Command SOME_CMD = null;
+        //    var stub = Substitute.For<IValidator<Command>>();
+        //    stub.Validate(SOME_CMD).ReturnsForAnyArgs(expected);
 
-            return stub;
+        //    return stub;
+        //}
+
+        public static IFactory<string> GetFakeCommandCollection(IEnumerable<string> values)
+        {
+            // TODO: все таки сделать это через NSubstitute
+            return new FakeCommandCollection(values);
+        }
+
+        public static IFactory<string> GetFakeCommandCollection() => GetFakeCommandCollection(new string[0]);
+
+        public class FakeCommandCollection : IFactory<string>
+        {
+            private IEnumerable<string> Collection;
+
+            public FakeCommandCollection(IEnumerable<string> values)
+            {
+                this.Collection = values;
+            }
+
+            public IEnumerable<string> GetCollection()
+            {
+                return Collection;
+            }
         }
     }
 }

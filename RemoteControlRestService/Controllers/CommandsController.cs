@@ -11,10 +11,12 @@ namespace RemoteControlRestService.Controllers
     {
         readonly IEnumerable<string> CommandCollection;
 
-        public CommandsController()
+        // TODO: decomment
+        //public CommandsController() : this(new CommandCollectionFactory()) { }
+
+        public CommandsController(IFactory<string> commandFactory)
         {
-            var factory = new CommandCollectionFactory();
-            CommandCollection = factory.GetCollection();
+            CommandCollection = commandFactory.GetCollection();
         }
 
         public IEnumerable<string> Get()

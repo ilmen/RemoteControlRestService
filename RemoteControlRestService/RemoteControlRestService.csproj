@@ -99,7 +99,6 @@
     <Compile Include="Infrastracture\SystemTime.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Infrastracture\Extentions.cs" />
-    <Compile Include="Infrastracture\CommandLineSettingProvider.cs" />
     <Compile Include="Infrastracture\Validation\CommandCollectionValidator.cs">
       <SubType>Code</SubType>
     </Compile>

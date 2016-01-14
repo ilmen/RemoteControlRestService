@@ -15,17 +15,17 @@ namespace RemoteControlRestService.Controllers
         IEnumerable<string> CommandCollection;
         IValidator<Task> Validator;
 
-        public TasksController() : this(new TaskValidator()) { }
+        // TODO: decomment
+        //public TasksController() : this(new TaskValidator(), new CommandCollectionFactory()) { }
 
-        public TasksController(IValidator<Task> validator)
+        public TasksController(IValidator<Task> validator, IFactory<string> commandFactory)
         {
             Validator = validator;
 
             var taskProvider = new TaskCollectionFactory();
             TaskCollection = taskProvider.GetCollection();
 
-            var commandProvider = new CommandCollectionFactory();
-            CommandCollection = commandProvider.GetCollection();
+            CommandCollection = commandFactory.GetCollection();
         }
 
         public IEnumerable<Task> Get()

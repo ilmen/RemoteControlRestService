@@ -1,28 +1,20 @@
-﻿using NUnit.Framework;
+﻿using NSubstitute;
+using NUnit.Framework;
+using RemoteControlRestService.Classes;
 using RemoteControlRestService.Infrastracture.Validation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NSubstitute;
-using RemoteControlRestService.Infrastracture.Tasks;
-using RemoteControlRestService.Infrastracture.Commands;
 
 namespace RemoteControlRestServiceTests
 {
     [TestFixture]
     public class TaskValidatorTests
     {
-        IEnumerable<Command> GetStubCommandCollection()
-        {
-            return new Command[0];
-        }
-
         [Test]
         public void Validate_WrongId_ReturnsInvalidResult()
         {
-            var stubCollection = GetStubCommandCollection();
-            var validator = new TaskValidator(stubCollection);
+            var stub = ValidateTestHelper.GetFakeCommandCollection();
+            var validator = new TaskValidator(stub);
             var task = new Task() { Id = Guid.Empty };
 
             var result = validator.Validate(task);
@@ -34,8 +26,8 @@ namespace RemoteControlRestServiceTests
         [Test]
         public void Validate_WrongTimes_ReturnsInvalidResult()
         {
-            var stubCollection = GetStubCommandCollection();
-            var validator = new TaskValidator(stubCollection);
+            var stub = ValidateTestHelper.GetFakeCommandCollection();
+            var validator = new TaskValidator(stub);
             var task = new Task()
             {
                 Id = new Guid("{15C97E19-48A9-451F-8F66-549505B41268}"),
@@ -52,32 +44,35 @@ namespace RemoteControlRestServiceTests
         [Test]
         public void Validate_WrongCmd_ReturnsInvalidResult()
         {
-            var stubCollection = GetStubCommandCollection();
-            var validator = new TaskValidator(stubCollection);
+            var COMMAND = "some_command";
+            var OTHER_COMMAND = "other_command";
+            var mock = ValidateTestHelper.GetFakeCommandCollection(new string[] { COMMAND });
+            var validator = new TaskValidator(mock);
             var task = new Task()
             {
                 Id = new Guid("{15C97E19-48A9-451F-8F66-549505B41268}"),
-                Cmd = null
+                CommandType = OTHER_COMMAND
             };
 
             var result = validator.Validate(task);
 
             Assert.IsFalse(result.IsValid);
-            StringAssert.Contains("Поле Cmd не задана", result.ErrorMessage);
+            StringAssert.Contains("Некорректное значение поля CommandType", result.ErrorMessage);
         }
 
         [Test]
         public void Validate_AllValid_ReturnsValidResult()
         {
-            var cmd = new Command() { Id = 1, FilePath = "SOMEFILE.bat", Name = "SOME_NAME" };
-            var validator = new TaskValidator(new List<Command>() { cmd });
+            var SOME_COMMAND = "some_command";
+            var mock = ValidateTestHelper.GetFakeCommandCollection(new string[] { SOME_COMMAND });
+            var validator = new TaskValidator(mock);
             var ONE_TIME = new DateTime(2015, 12, 9);
             var task = new Task()
             {
                 Id = new Guid("{15C97E19-48A9-451F-8F66-549505B41268}"),
                 CreateTime = ONE_TIME,
                 RunTime = ONE_TIME,
-                Cmd = cmd
+                CommandType = SOME_COMMAND
             };
 
             var result = validator.Validate(task);

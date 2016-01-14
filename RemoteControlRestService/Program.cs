@@ -17,7 +17,10 @@ namespace RemoteControlRestService
             var provider = new ServiceSettingsProvider();
             var settings = provider.GetSettings();
 
-            // setting task collection
+            // load commands collection
+            CommandCollectionFactory.LoadCollection();
+
+            // setup task collection
             var tasks = GetDefaultTaskCollection();
             TaskCollectionFactory.SetCollection(tasks);
 

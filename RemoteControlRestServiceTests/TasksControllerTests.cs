@@ -1,9 +1,7 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
+using RemoteControlRestService.Classes;
 using RemoteControlRestService.Controllers;
-using RemoteControlRestService.Infrastracture;
-using RemoteControlRestService.Infrastracture.Commands;
-using RemoteControlRestService.Infrastracture.Tasks;
 using RemoteControlRestService.Infrastracture.Validation;
 using System;
 using System.Collections.Generic;
@@ -27,12 +25,7 @@ namespace RemoteControlRestServiceTests
                 Id = guid,
                 CreateTime = SOME_TIME,
                 RunTime = SOME_TIME.AddSeconds(1),
-                Cmd = new Command()
-                {
-                    Id = 1,
-                    FilePath = "stub.bat",
-                    Name = "Stub"
-                }
+                CommandType = "command"
             };
         }
 
@@ -48,10 +41,20 @@ namespace RemoteControlRestServiceTests
             };
         }
 
+        IFactory<string> GetFakeCommandCollectionFactory()
+        {
+            var command = Substitute.For<IFactory<string>>();
+            command.GetCollection().Returns(new string[0]);
+
+            return command;
+        }
+
         TasksController GetController()
         {
             var stubValidator = ValidateTestHelper.GetFakeTaskValidator(ValidResult.Valid);
-            return new TasksController(stubValidator);
+            var commandFactory = GetFakeCommandCollectionFactory();
+
+            return new TasksController(stubValidator, commandFactory);
         }
 
         [Test]

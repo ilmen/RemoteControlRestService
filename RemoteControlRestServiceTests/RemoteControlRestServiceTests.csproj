@@ -62,8 +62,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandLineSettingProviderTests.cs" />
-    <Compile Include="CommandLineSettingTests.cs" />
     <Compile Include="ExtentionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskCollectionFactoryTests.cs" />

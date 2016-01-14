@@ -1,11 +1,7 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
-using RemoteControlRestService.Infrastracture.Tasks;
-using RemoteControlRestService.Infrastracture.Validation;
+using RemoteControlRestService.Classes;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RemoteControlRestServiceTests
 {

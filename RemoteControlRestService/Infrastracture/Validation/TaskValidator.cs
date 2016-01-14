@@ -9,10 +9,12 @@ namespace RemoteControlRestService.Infrastracture.Validation
     {
         IEnumerable<string> CommandCollection;
 
-        public TaskValidator()
+        // TODO: decomment
+        //public TaskValidator() : this(new CommandCollectionFactory()) { }
+
+        public TaskValidator(IFactory<string> commandFactory)
         {
-            var factory = new CommandCollectionFactory();
-            CommandCollection = factory.GetCollection();
+            CommandCollection = commandFactory.GetCollection();
         }
 
         public ValidResult Validate(Task value)
@@ -23,7 +25,7 @@ namespace RemoteControlRestService.Infrastracture.Validation
 
             if (value.CreateTime > value.RunTime) return ValidResult.GetInvalidResult("Время запуска задачи не может быть меньше времени создания задачи!");
 
-            if (!CommandCollection.Contains(value.CommandType)) return ValidResult.GetInvalidResult("Некорректное значение поля CmdType!");
+            if (!CommandCollection.Contains(value.CommandType)) return ValidResult.GetInvalidResult("Некорректное значение поля CommandType!");
 
             return ValidResult.Valid;
         }
