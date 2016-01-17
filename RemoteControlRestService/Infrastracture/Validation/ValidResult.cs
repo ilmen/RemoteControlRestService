@@ -49,6 +49,7 @@ namespace RemoteControlRestService.Infrastracture.Validation
         }
     }
 
+    [Serializable]
     public class CheckValidException : Exception
     {
         //public CheckValidException() : base() { }

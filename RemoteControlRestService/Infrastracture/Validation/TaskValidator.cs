@@ -9,8 +9,7 @@ namespace RemoteControlRestService.Infrastracture.Validation
     {
         IEnumerable<string> CommandCollection;
 
-        // TODO: decomment
-        //public TaskValidator() : this(new CommandCollectionFactory()) { }
+        public TaskValidator() : this(new CommandCollectionFactory()) { }
 
         public TaskValidator(IFactory<string> commandFactory)
         {

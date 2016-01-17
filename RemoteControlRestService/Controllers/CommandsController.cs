@@ -11,8 +11,7 @@ namespace RemoteControlRestService.Controllers
     {
         readonly IEnumerable<string> CommandCollection;
 
-        // TODO: decomment
-        //public CommandsController() : this(new CommandCollectionFactory()) { }
+        public CommandsController() : this(new CommandCollectionFactory()) { }
 
         public CommandsController(IFactory<string> commandFactory)
         {

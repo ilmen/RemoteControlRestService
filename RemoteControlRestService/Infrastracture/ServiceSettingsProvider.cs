@@ -35,6 +35,8 @@ namespace RemoteControlRestService.Infrastracture
             }
             catch (Exception ex)
             {
+                Console.WriteLine("When loading settings founded several errors:");
+                Console.WriteLine(ex.ToString());
                 return ServiceSettings.Default;
             }
         }

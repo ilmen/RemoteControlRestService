@@ -1,27 +1,61 @@
-﻿using Owin;
-using System.Web.Http;
+﻿using RemoteControlRestService.Classes;
+using RemoteControlRestService.Infrastracture;
+using System;
+using System.Collections.Generic;
 
 namespace RemoteControlRestService
 {
-    public class Startup
+    public class StartUp
     {
-        // This code configures Web API. The Startup class is specified as a type
-        // parameter in the WebApp.Start method.
-        public void Configuration(IAppBuilder appBuilder)
+        static ServiceSettings settings;
+
+        public ServiceSettings GetServiceSettings()
         {
-            // Configure Web API for self-host. 
-            HttpConfiguration config = new HttpConfiguration();
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
+            return settings;
+        }
 
-            // настраиваем JSON сериализацию
-            config.Formatters.Remove(config.Formatters.XmlFormatter);
-            config.Formatters.JsonFormatter.Indent = true;
+        public void Configure()
+        {
+            // getting service settings
+            var provider = new ServiceSettingsProvider();
+            settings = provider.GetSettings();
 
-            appBuilder.UseWebApi(config);
-        } 
+            // load commands collection
+            CommandCollectionFactory.LoadCollection();
+
+            // setup task collection
+            var tasks = GetDefaultTaskCollection();
+            TaskCollectionFactory.SetCollection(tasks);
+
+            // configure task runner
+            var tasksToRunProvider = new TasksToRunProvider(tasks);
+            var worker = new TaskRunner(tasksToRunProvider);
+            var timerInterval = TimeSpan.FromSeconds(settings.FindNewTaskTimerInteval).TotalMilliseconds;
+            var timer = new System.Timers.Timer(timerInterval);
+            timer.Elapsed += (s, e) => worker.TryStartNewTasks();
+            timer.Start();
+        }
+
+
+        IList<Task> GetDefaultTaskCollection()
+        {
+            return new List<Task>();
+
+            //var cmdType = "testcommand";
+            //var factory = new RunnableTaskFactory();
+            //var command = factory.Create(cmdType);
+
+            //return new List<Task>()
+            //    {
+            //        new RemoteControlRestService.Classes.Task()
+            //        {
+            //            Id = new Guid("{D713368A-73D0-4054-82FD-BA6F95586FE9}"),
+            //            CreateTime = DateTime.MinValue,
+            //            RunTime = DateTime.MinValue,
+            //            CommandType = cmdType,
+            //            RunnableTask = command,
+            //        }
+            //    };
+        }
     }
 }

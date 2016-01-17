@@ -27,6 +27,7 @@ namespace RemoteControlRestService.Classes.RunnableTasks
             catch (Exception ex)
             {
                 Status = enRunnableTaskStatus.Error;
+                System.IO.File.WriteAllText(this.BatchFilePath + ".error.txt", ex.ToString());
             }
         }
 

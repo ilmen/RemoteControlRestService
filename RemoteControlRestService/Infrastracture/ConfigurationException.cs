@@ -2,6 +2,7 @@
 
 namespace RemoteControlRestService.Infrastracture
 {
+    [Serializable]
     public class ConfigurationException : Exception
     {
         //public ConfigurationException() : base() { }

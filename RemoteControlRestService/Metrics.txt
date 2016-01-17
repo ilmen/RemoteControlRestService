@@ -1,0 +1,17 @@
+﻿2016.01.17
+------------------------------------------------------
+Конфигурация: Debug
+
+Сборка: E:\#Projects\RemoteControlRestService\RemoteControlRestService\bin\Debug\RemoteControlRestService.exe
+Индекс удобства поддержки: 85
+Сложность организации циклов: 183
+Глубина наследования: 2
+Взаимозависимость классов: 86
+Строки кода: 273
+
+Сборка: E:\#Projects\RemoteControlRestService\RemoteControlRestServiceTests\bin\Debug\RemoteControlRestServiceTests.dll
+Индекс удобства поддержки: 80
+Сложность организации циклов: 63
+Глубина наследования: 1
+Взаимозависимость классов: 46
+Строки кода: 195

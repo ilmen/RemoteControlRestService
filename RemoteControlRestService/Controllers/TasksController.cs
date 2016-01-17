@@ -15,8 +15,7 @@ namespace RemoteControlRestService.Controllers
         IEnumerable<string> CommandCollection;
         IValidator<Task> Validator;
 
-        // TODO: decomment
-        //public TasksController() : this(new TaskValidator(), new CommandCollectionFactory()) { }
+        public TasksController() : this(new TaskValidator(), new CommandCollectionFactory()) { }
 
         public TasksController(IValidator<Task> validator, IFactory<string> commandFactory)
         {
