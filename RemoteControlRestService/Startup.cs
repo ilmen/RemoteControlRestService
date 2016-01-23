@@ -39,7 +39,18 @@ namespace RemoteControlRestService
 
         IList<Task> GetDefaultTaskCollection()
         {
-            return new List<Task>();
+            //return new List<Task>();
+
+            return new List<Task>()
+            {
+                new Task()
+                {
+                    Id=Guid.NewGuid(),
+                    CommandType= "testcommand",
+                    CreateTime=DateTime.Now,
+                    RunTime=DateTime.Now.AddMinutes(15)
+                }
+            };
 
             //var cmdType = "testcommand";
             //var factory = new RunnableTaskFactory();

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Owin.Hosting;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,18 +43,6 @@ namespace RemoteControlRestService
             Console.WriteLine("Exiting...");
         }
 
-        static void TestRestService(string url)
-        {
-            Console.WriteLine("Test request:");
-
-            var client = new HttpClient();
-
-            var response = client.GetAsync(url).Result;
-
-            Console.WriteLine(response);
-            Console.WriteLine(response.Content.ReadAsStringAsync().Result);
-        }
-
         static void StartOWINServer(string baseUrl, CancellationToken ct)
         {
             using (WebApp.Start<OwinStartup>(url: baseUrl))
@@ -62,12 +51,50 @@ namespace RemoteControlRestService
 
                 Console.WriteLine("Server started on <" + baseUrl + "> endpoint.");
 
-                if (System.Diagnostics.Debugger.IsAttached) TestRestService(baseUrl + "api/tasks");
+                var useTesting = !System.Diagnostics.Debugger.IsAttached;
+                if (useTesting)
+                {
+                    TestRestService(baseUrl + "api/tasks", HttpMethod.Get);
+
+                    foreach (var item in System.Linq.Enumerable.Range(0, 2))
+                    {
+                        //var json = "{\"id\":\"" + Guid.NewGuid() + "\"}";
+                        var task = new RemoteControlRestService.Classes.Task() { Id = Guid.NewGuid() };
+                        var json = Newtonsoft.Json.JsonConvert.SerializeObject(task);
+                        TestRestService(baseUrl + "api/tasks", HttpMethod.Post, json);
+                    }
+
+                    TestRestService(baseUrl + "api/tasks", HttpMethod.Get);
+                }
                 
                 ct.WaitHandle.WaitOne();
 
                 Interlocked.Decrement(ref hostCounter);
             };
+        }
+
+        static void TestRestService(string url, HttpMethod method, string postData = null)
+        {
+            Console.WriteLine("Test request: " + method.Method + " <" + url + ">");
+
+            using (var client = new HttpClient())
+            {
+                HttpResponseMessage response;
+                if (method == HttpMethod.Post)
+                {
+                    var postDataKV = new KeyValuePair<string, string>("value", postData);
+                    var content = new FormUrlEncodedContent(new[] { postDataKV });
+
+                    response = client.PostAsync(url, content).Result;
+                }
+                else
+                {
+                    response = client.GetAsync(url).Result;
+                }
+
+                Console.WriteLine(response);
+                Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+            }
         }
     }
 }
