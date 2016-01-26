@@ -57,10 +57,10 @@ namespace RemoteControlRestServiceTests
         public void GetCollection_CorrectCollection_ReturnsEqualsCollection()
         {
             var expected = GetTaskCollection();
-            TaskCollectionFactory.SetCollection(expected);
-            var factory = new TaskCollectionFactory();
+            TasksProvider.SetCollection(expected);
+            var provider = new TasksProvider();
 
-            var actual = factory.GetCollection();
+            var actual = provider.Create();
 
             Assert.AreEqual(expected, actual);
         }
@@ -68,17 +68,17 @@ namespace RemoteControlRestServiceTests
         [Test]
         public void GetCollection_NullCollection_ThrownsConfigurationException()
         {
-            TaskCollectionFactory.SetCollection(null);
-            var factory = new TaskCollectionFactory();
+            TasksProvider.SetCollection(null);
+            var provider = new TasksProvider();
 
-            var exc = Assert.Catch<ConfigurationException>(() => factory.GetCollection());
+            var exc = Assert.Catch<ConfigurationException>(() => provider.Create());
             StringAssert.Contains("Не задана коллекция задач", exc.Message);
         }
 
         [TearDown]
         public void ResetTaskCollection()
         {
-            TaskCollectionFactory.SetCollection(null);
+            TasksProvider.SetCollection(null);
         }
     }
 }

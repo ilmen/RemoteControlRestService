@@ -34,26 +34,26 @@ namespace RemoteControlRestServiceTests
         //    return stub;
         //}
 
-        public static IFactory<string> GetFakeCommandCollection(IEnumerable<string> values)
+        public static IFactory<IEnumerable<string>> GetFakeCommandCollection(IEnumerable<string> values)
         {
             // TODO: все таки сделать это через NSubstitute
             return new FakeCommandCollection(values);
         }
 
-        public static IFactory<string> GetFakeCommandCollection() => GetFakeCommandCollection(new string[0]);
+        public static IFactory<IEnumerable<string>> GetFakeCommandCollection() => GetFakeCommandCollection(new string[0]);
 
-        public class FakeCommandCollection : IFactory<string>
+        public class FakeCommandCollection : IFactory<IEnumerable<string>>
         {
-            private IEnumerable<string> Collection;
+            private IEnumerable<string> _Collection;
 
-            public FakeCommandCollection(IEnumerable<string> values)
+            public FakeCommandCollection(IEnumerable<string> collection)
             {
-                this.Collection = values;
+                this._Collection = collection;
             }
 
-            public IEnumerable<string> GetCollection()
+            public IEnumerable<string> Create()
             {
-                return Collection;
+                return _Collection;
             }
         }
     }

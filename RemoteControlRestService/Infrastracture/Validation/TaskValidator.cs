@@ -11,9 +11,9 @@ namespace RemoteControlRestService.Infrastracture.Validation
 
         public TaskValidator() : this(new CommandCollectionFactory()) { }
 
-        public TaskValidator(IFactory<string> commandFactory)
+        public TaskValidator(IFactory<IEnumerable<string>> commandFactory)
         {
-            CommandCollection = commandFactory.GetCollection();
+            CommandCollection = commandFactory.Create();
         }
 
         public ValidResult Validate(Task value)

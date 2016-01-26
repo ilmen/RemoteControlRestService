@@ -10,7 +10,7 @@ using System.Linq;
 namespace RemoteControlRestServiceTests
 {
     [TestFixture]
-    public class TasksControllerTests
+    public class TaskCollectionTests
     {
         Task CreateTask(string guidString)
         {
@@ -41,57 +41,63 @@ namespace RemoteControlRestServiceTests
             };
         }
 
-        IFactory<string> GetFakeCommandCollectionFactory()
+        IFactory<IList<Task>> GetFakeTaskProvider(IList<Task> tasks)
         {
-            var command = Substitute.For<IFactory<string>>();
-            command.GetCollection().Returns(new string[0]);
+            var provider = Substitute.For<IFactory<IList<Task>>>();
+            provider.Create().Returns(tasks);
+
+            return provider;
+        }
+
+        IFactory<IEnumerable<string>> GetFakeCommandFactory()
+        {
+            var command = Substitute.For<IFactory<IEnumerable<string>>>();
+            command.Create().Returns(new string[0]);
 
             return command;
         }
 
-        TasksController GetController()
+        TaskCollection GetController(IList<Task> tasks)
         {
             var stubValidator = ValidateTestHelper.GetFakeTaskValidator(ValidResult.Valid);
-            var commandFactory = GetFakeCommandCollectionFactory();
+            var taskFactory = GetFakeTaskProvider(tasks);
+            var commandFactory = GetFakeCommandFactory();
 
-            return new TasksController(stubValidator, commandFactory);
+            return new TaskCollection(stubValidator, taskFactory, commandFactory);
         }
 
         [Test]
         public void GetAll_Always_UseTaskCollectionFactory()
         {
             var expected = GetTaskCollection();
-            TaskCollectionFactory.SetCollection(expected);
-            var controller = GetController();
+            var controller = GetController(expected);
 
-            var tasks = controller.Get();
+            var tasks = controller.GetAll();
 
             Assert.AreEqual(expected, tasks);
         }
 
         [Test]
-        public void Get_CorrectId_RetunsTask()
+        public void GetOne_CorrectId_RetunsTask()
         {
             var expected = CreateTask("{BC2CF9DA-271B-4E19-AF8D-859F0691195D}");
             var tasks = GetTaskCollection();
             tasks.Add(expected);
-            TaskCollectionFactory.SetCollection(tasks);
-            var controller = GetController();
+            var controller = GetController(tasks);
 
-            var task = controller.Get(expected.Id);
+            var task = controller.GetOne(expected.Id);
 
             Assert.AreEqual(expected, task);
         }
 
         [Test]
-        public void Get_WrongId_RetunsNull()
+        public void GetOne_WrongId_RetunsNull()
         {
             var wrongId = new Guid("{F0756779-4AE3-4012-9FF1-231E36A25A40}");
             var tasks = GetTaskCollection();
-            TaskCollectionFactory.SetCollection(tasks);
-            var controller = GetController();
+            var controller = GetController(tasks);
 
-            var nullTask = controller.Get(wrongId);
+            var nullTask = controller.GetOne(wrongId);
 
             Assert.Null(nullTask);
         }
@@ -101,8 +107,7 @@ namespace RemoteControlRestServiceTests
         {
             var tasks = GetTaskCollection();
             var guid = tasks.First().Id;
-            TaskCollectionFactory.SetCollection(tasks);
-            var controller = GetController();
+            var controller = GetController(tasks);
 
             controller.Delete(guid);
 
@@ -110,108 +115,93 @@ namespace RemoteControlRestServiceTests
         }
 
         [Test]
-        public void Delete_WrongId_TaskCollectionNotChanged()
+        public void Delete_WrongId_ThrownArgumentException()
         {
             var wrongId = new Guid("{F0756779-4AE3-4012-9FF1-231E36A25A40}");
             var tasks = GetTaskCollection();
             var countBeforeDelete = tasks.Count;
-            TaskCollectionFactory.SetCollection(tasks);
-            var controller = GetController();
+            var controller = GetController(tasks);
 
-            controller.Delete(wrongId);
-
-            Assert.IsTrue(tasks.Count == countBeforeDelete);
+            var ex = Assert.Catch<ArgumentException>(() => controller.Delete(wrongId));
+            StringAssert.Contains("Задача с таким Id не найдена", ex.Message);
         }
 
         [Test]
-        public void Post_NewTask_TaskAddedToCollection()
+        public void Insert_NewTask_TaskAddedToCollection()
         {
             var newTask = CreateTask("{340DC812-C25B-491B-97BA-DAE3E52680E0}");
             var tasks = GetTaskCollection();
-            TaskCollectionFactory.SetCollection(tasks);
-            var controller = GetController();
+            var controller = GetController(tasks);
 
-            controller.Post(newTask);
+            controller.Insert(newTask);
 
             CollectionAssert.Contains(tasks, newTask);
         }
 
         [Test]
-        public void Post_NullTask_ThrowsArgumentNullException()
+        public void Insert_NullTask_ThrowsArgumentNullException()
         {
             var tasks = GetTaskCollection();
-            TaskCollectionFactory.SetCollection(tasks);
-            var controller = GetController();
+            var controller = GetController(tasks);
 
-            Assert.Catch<ArgumentNullException>(() => controller.Post(null));
+            Assert.Catch<ArgumentNullException>(() => controller.Insert(null));
         }
 
         [Test]
-        public void Put_Always_TaskUpdatedInCollection()
+        public void Update_Always_TaskUpdatedInCollection()
         {
             var guid = new Guid("{D82FA792-6FCE-4F19-A4E0-3B7FCF7C28C9}");
             var oldTask = CreateTask(guid);
             var newTask = CreateTask(guid);
             var otherTask = CreateTask("{3B6FDF0F-0789-4E37-A95B-1B485CDCB9B2}");
             var tasks = new List<Task>() { oldTask, otherTask };
-            TaskCollectionFactory.SetCollection(tasks);
-            var controller = GetController();
+            var controller = GetController(tasks);
             Assert.IsFalse(Object.ReferenceEquals(tasks.Single(x => x.Id == guid), newTask));
 
-            controller.Put(oldTask.Id, newTask);
+            controller.Update(oldTask.Id, newTask);
 
             Assert.IsTrue(Object.ReferenceEquals(tasks.Single(x => x.Id == guid), newTask));
         }
 
         [Test]
-        public void Put_NullTask_ThrowsArgumentNullException()
+        public void Update_NullTask_ThrowsArgumentNullException()
         {
             var tasks = GetTaskCollection();
-            TaskCollectionFactory.SetCollection(tasks);
-            var controller = GetController();
+            var controller = GetController(tasks);
 
-            Assert.Catch<ArgumentNullException>(() => controller.Put(Arg.Any<Guid>(), null));
+            Assert.Catch<ArgumentNullException>(() => controller.Update(Arg.Any<Guid>(), null));
         }
 
         [Test]
-        public void Put_IdParameterAndTaskIdFieldNoMatch_ThrowsArgumentException()
+        public void Update_IdParameterAndTaskIdFieldNoMatch_ThrowsArgumentException()
         {
             var TASK_ID = new Guid("{866A4D3C-71C3-4AE4-B4EA-EBA0855EFCD6}");
             var OTHER_TASK_ID = new Guid("{005541BD-F397-4DF2-8C46-C886AA02D5E5}");
             var tasks = GetTaskCollection();
-            TaskCollectionFactory.SetCollection(tasks);
-            var controller = GetController();
+            var controller = GetController(tasks);
 
-            Assert.Catch<ArgumentException>(() => controller.Put(TASK_ID, CreateTask(OTHER_TASK_ID)));
+            Assert.Catch<ArgumentException>(() => controller.Update(TASK_ID, CreateTask(OTHER_TASK_ID)));
         }
 
         [Test]
-        public void Put_WrongTaskId_ThrowsArgumentException()
+        public void Update_WrongTaskId_ThrowsArgumentException()
         {
             var TASK_ID = new Guid("{866A4D3C-71C3-4AE4-B4EA-EBA0855EFCD6}");
             var OTHER_TASK_ID = new Guid("{005541BD-F397-4DF2-8C46-C886AA02D5E5}");
             var task = CreateTask(TASK_ID);
-            TaskCollectionFactory.SetCollection(new List<Task>() { task });
-            var controller = GetController();
+            var controller = GetController(new List<Task>() { task });
 
-            Assert.Catch<ArgumentException>(() => controller.Put(OTHER_TASK_ID, task));
+            Assert.Catch<ArgumentException>(() => controller.Update(OTHER_TASK_ID, task));
         }
 
         [Test]
-        public void Put_DublicatedTasks_ThrowsArgumentException()
+        public void Update_DublicatedTasks_ThrowsArgumentException()
         {
             var oneTask = CreateTask("{866A4D3C-71C3-4AE4-B4EA-EBA0855EFCD6}");
             var tasks = new List<Task>() { oneTask, oneTask };
-            TaskCollectionFactory.SetCollection(tasks);
-            var controller = GetController();
+            var controller = GetController(tasks);
 
-            Assert.Catch<ArgumentException>(() => controller.Put(oneTask.Id, Arg.Any<Task>()));
-        }
-
-        [TearDown]
-        public void ResetTaskCollectionFactory()
-        {
-            TaskCollectionFactory.SetCollection(null);
+            Assert.Catch<ArgumentException>(() => controller.Update(oneTask.Id, Arg.Any<Task>()));
         }
     }
 }

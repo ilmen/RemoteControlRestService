@@ -1,52 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
 using RemoteControlRestService.Classes;
+using Nancy;
 
 namespace RemoteControlRestService.Controllers
 {
-    public class CommandsController : ApiController
+    public class CommandsController : NancyModule
     {
-        readonly IEnumerable<string> CommandCollection;
+        readonly IEnumerable<string> _CommandCollection;
 
         public CommandsController() : this(new CommandCollectionFactory()) { }
 
-        public CommandsController(IFactory<string> commandFactory)
+        public CommandsController(IFactory<IEnumerable<string>> commandFactory)
         {
-            CommandCollection = commandFactory.GetCollection();
+            _CommandCollection = commandFactory.Create();
+
+            Get["/api/commands"] = p => Response.AsJson(_CommandCollection);
+
+            Get["/api/commands/{Id}"] = p => GetOne(p.Id);
         }
 
-        public IEnumerable<string> Get()
+        public Response GetOne(int id)
         {
-            return CommandCollection;
-        }
+            if (id >= _CommandCollection.Count()) return HttpStatusCode.NotFound;
 
-        public string Get(int id)
-        {
-            // TODO: если элемент с таким Id не существует - возвращать ошибку 404
-            return CommandCollection.Skip(id).FirstOrDefault();
-        }
-
-        public HttpResponseMessage Post([FromBody]string value)
-        {
-            return GetReadOnlyCollectionError();
-        }
-
-        public HttpResponseMessage Put(int id, [FromBody]string value)
-        {
-            return GetReadOnlyCollectionError();
-        }
-
-        public HttpResponseMessage Delete(int id)
-        {
-            return GetReadOnlyCollectionError();
-        }
-
-        HttpResponseMessage GetReadOnlyCollectionError()
-        {
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Коллекция доступна только для чтения!");
+            return Response.AsJson(_CommandCollection.Skip(id).FirstOrDefault());
         }
     }
 }

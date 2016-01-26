@@ -14,8 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3F0C3E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteControlRestServiceTests", "RemoteControlRestServiceTests\RemoteControlRestServiceTests.csproj", "{C4452197-8AC0-4964-8EE7-2E6B32C5CFB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RControlServiceNancy", "RControlServiceNancy\RControlServiceNancy.csproj", "{AB757E4D-DF03-43BA-8F7D-6E0BF6560439}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,10 +28,6 @@ Global
 		{C4452197-8AC0-4964-8EE7-2E6B32C5CFB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4452197-8AC0-4964-8EE7-2E6B32C5CFB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4452197-8AC0-4964-8EE7-2E6B32C5CFB3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB757E4D-DF03-43BA-8F7D-6E0BF6560439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB757E4D-DF03-43BA-8F7D-6E0BF6560439}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB757E4D-DF03-43BA-8F7D-6E0BF6560439}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB757E4D-DF03-43BA-8F7D-6E0BF6560439}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

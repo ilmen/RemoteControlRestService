@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RemoteControlRestService.Classes
 {
-    public class TaskCollectionFactory
+    public class TasksProvider : IFactory<IList<Task>>
     {
         static IList<Task> TaskCollection;
 
@@ -12,7 +12,7 @@ namespace RemoteControlRestService.Classes
             TaskCollection = collection;
         }
 
-        public IList<Task> GetCollection()
+        public IList<Task> Create()
         {
             if (TaskCollection == null) throw new ConfigurationException("Не задана коллекция задач! Необходимо вызвать метод \"TaskCollectionFactory.SetCollection(IList<Task> collection)\"");
 

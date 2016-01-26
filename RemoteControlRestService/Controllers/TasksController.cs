@@ -1,79 +1,54 @@
-﻿using RemoteControlRestService.Classes;
-using RemoteControlRestService.Infrastracture.Validation;
+﻿using Nancy;
+using RemoteControlRestService.Classes;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
 
 namespace RemoteControlRestService.Controllers
 {
-    public class TasksController : ApiController
+    public class TasksController : NancyModule
     {
-        static IList<Task> TaskCollection;
-        IEnumerable<string> CommandCollection;
-        IValidator<Task> Validator;
+        const string SUPPORTED_FORMAT = "application/json";
 
-        public TasksController() : this(new TaskValidator(), new CommandCollectionFactory()) { }
+        ICRUDCollection<Guid, Task> _TaskCollection;
 
-        public TasksController(IValidator<Task> validator, IFactory<string> commandFactory)
+        public TasksController() : this(new TaskCollection()) { }
+
+        public TasksController(ICRUDCollection<Guid, Task> taskController)
         {
-            Validator = validator;
+            _TaskCollection = taskController;
 
-            var taskProvider = new TaskCollectionFactory();
-            TaskCollection = taskProvider.GetCollection();
+            Get["/api/tasks"] = p => Response.AsJson(_TaskCollection.GetAll());
 
-            CommandCollection = commandFactory.GetCollection();
+            Get["/api/tasks/{Id}"] = p => Response.AsJson(_TaskCollection.GetOne((Guid)p.Id));
+
+            Post["/api/tasks"] = p =>
+            {
+                var task = GetTaskFromRequestBody();
+                _TaskCollection.Insert(task);
+                return HttpStatusCode.Created;
+            };
+
+            Put["/api/tasks/{Id}"] = p =>
+            {
+                var task = GetTaskFromRequestBody();
+                _TaskCollection.Update(p.Id, task);
+                return HttpStatusCode.Accepted;
+            };
+
+            Delete["/api/tasks/{Id}"] = p =>
+            {
+                _TaskCollection.Delete(p.Id);
+                return HttpStatusCode.OK;
+            };
         }
 
-        public IEnumerable<Task> Get()
+        public Task GetTaskFromRequestBody()
         {
-            return TaskCollection;
-        }
+            var format = Request.Headers.ContentType;
+            if (!format.StartsWith(SUPPORTED_FORMAT)) throw new Exception($"Формат \"{format}\" не поддерживаеться! Используйте \"{SUPPORTED_FORMAT}\"!");
 
-        public Task Get(Guid id)
-        {
-            // TODO: если элемент с таким Id не существует - возвращать ошибку 404
-            return TaskCollection.FirstOrDefault(x => x.Id == id);
-        }
-
-        public void Post([FromBody]Task value)
-        {
-            ValidateValue(value);
-            if (TaskCollection.Select(x => x.Id).Contains(value.Id)) throw new ArgumentException("Нарушение уникальности идентификатора задачи!");
-
-            TaskCollection.Add(value);
-        }
-
-        public void Put(Guid id, [FromBody]Task value)
-        {
-            ValidateValue(value);
-            if (value.Id != id) throw new ArgumentException("Входные параметры Id и value.Id не совпадают!");
-
-            // TODO: поменять Single на SingleOrDefault и сделать возврат ошибки, если элемент с таким id не найден
-            var toRemove = TaskCollection.Single(x => x.Id == id);
-            
-            TaskCollection.Remove(toRemove);
-
-            TaskCollection.Add(value);
-        }
-
-        public HttpResponseMessage Delete(Guid id)
-        {
-            var toRemove = TaskCollection.FirstOrDefault(x => x.Id == id);
-            
-            TaskCollection.Remove(toRemove);
-
-            return new HttpResponseMessage(HttpStatusCode.OK);
-        }
-
-        void ValidateValue(Task value)
-        {
-            // TODO: неравество задачи Null - это ограничение алгоритмов TasksController. Остальные проверки - ответвенность валидатора - проверять логическую корректность задачи
-            if (value == null) throw new ArgumentNullException("Команда не может быть равна Null!");
-            Validator.Validate(value).ThrowExceptionIfNotValid();
-            if (value.RunnableTask != null) throw new ArgumentException("Конкретный реализация задачи формируется только переред первым вызовом!");
+            var reader = new System.IO.StreamReader(Request.Body);
+            var body = reader.ReadToEnd();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Task>(body);
         }
     }
 }

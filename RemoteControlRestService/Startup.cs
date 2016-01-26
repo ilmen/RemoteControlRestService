@@ -25,7 +25,7 @@ namespace RemoteControlRestService
 
             // setup task collection
             var tasks = GetDefaultTaskCollection();
-            TaskCollectionFactory.SetCollection(tasks);
+            TasksProvider.SetCollection(tasks);
 
             // configure task runner
             var tasksToRunProvider = new TasksToRunProvider(tasks);

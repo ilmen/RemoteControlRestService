@@ -1,4 +1,4 @@
-﻿using Microsoft.Owin.Hosting;
+﻿using Nancy.Hosting.Self;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -27,7 +27,7 @@ namespace RemoteControlRestService
             foreach (var endpoint in endpoints)
             {
                 var baseAddress = $"http://{endpoint}/";
-                Task.Run(() => StartOWINServer(baseAddress, cts.Token), cts.Token);
+                Task.Run(() => StartNancyServer(baseAddress, cts.Token), cts.Token);
             }
 
             Console.WriteLine("Press <ENTER> to exit.");
@@ -43,35 +43,81 @@ namespace RemoteControlRestService
             Console.WriteLine("Exiting...");
         }
 
-        static void StartOWINServer(string baseUrl, CancellationToken ct)
+        static void StartNancyServer(string baseUrl, CancellationToken ct)
         {
-            using (WebApp.Start<OwinStartup>(url: baseUrl))
+            using (var host = CreateHost(baseUrl))
             {
+                host.Start();
+
                 Interlocked.Increment(ref hostCounter);
 
                 Console.WriteLine("Server started on <" + baseUrl + "> endpoint.");
 
-                var useTesting = !System.Diagnostics.Debugger.IsAttached;
-                if (useTesting)
-                {
-                    TestRestService(baseUrl + "api/tasks", HttpMethod.Get);
+                //var useTesting = !System.Diagnostics.Debugger.IsAttached;
+                //if (useTesting)
+                //{
+                //    TestRestService(baseUrl + "api/tasks", HttpMethod.Get);
 
-                    foreach (var item in System.Linq.Enumerable.Range(0, 2))
-                    {
-                        //var json = "{\"id\":\"" + Guid.NewGuid() + "\"}";
-                        var task = new RemoteControlRestService.Classes.Task() { Id = Guid.NewGuid() };
-                        var json = Newtonsoft.Json.JsonConvert.SerializeObject(task);
-                        TestRestService(baseUrl + "api/tasks", HttpMethod.Post, json);
-                    }
+                //    foreach (var item in System.Linq.Enumerable.Range(0, 2))
+                //    {
+                //        //var json = "{\"id\":\"" + Guid.NewGuid() + "\"}";
+                //        var task = new RemoteControlRestService.Classes.Task() { Id = Guid.NewGuid() };
+                //        var json = Newtonsoft.Json.JsonConvert.SerializeObject(task);
+                //        TestRestService(baseUrl + "api/tasks", HttpMethod.Post, json);
+                //    }
 
-                    TestRestService(baseUrl + "api/tasks", HttpMethod.Get);
-                }
-                
+                //    TestRestService(baseUrl + "api/tasks", HttpMethod.Get);
+                //}
+
                 ct.WaitHandle.WaitOne();
 
                 Interlocked.Decrement(ref hostCounter);
             };
         }
+
+        static NancyHost CreateHost(string url)
+        {
+            // включаем автоматическую регистрацию доменного имени
+            var settings = new HostConfiguration()
+            {
+                UrlReservations = new UrlReservations()
+                {
+                    CreateAutomatically = true
+                }
+            };
+
+            return new NancyHost(settings, new Uri(url));
+        }
+
+        //static void StartOWINServer(string baseUrl, CancellationToken ct)
+        //{
+        //    using (WebApp.Start<OwinStartup>(url: baseUrl))
+        //    {
+        //        Interlocked.Increment(ref hostCounter);
+
+        //        Console.WriteLine("Server started on <" + baseUrl + "> endpoint.");
+
+        //        var useTesting = !System.Diagnostics.Debugger.IsAttached;
+        //        if (useTesting)
+        //        {
+        //            TestRestService(baseUrl + "api/tasks", HttpMethod.Get);
+
+        //            foreach (var item in System.Linq.Enumerable.Range(0, 2))
+        //            {
+        //                //var json = "{\"id\":\"" + Guid.NewGuid() + "\"}";
+        //                var task = new RemoteControlRestService.Classes.Task() { Id = Guid.NewGuid() };
+        //                var json = Newtonsoft.Json.JsonConvert.SerializeObject(task);
+        //                TestRestService(baseUrl + "api/tasks", HttpMethod.Post, json);
+        //            }
+
+        //            TestRestService(baseUrl + "api/tasks", HttpMethod.Get);
+        //        }
+
+        //        ct.WaitHandle.WaitOne();
+
+        //        Interlocked.Decrement(ref hostCounter);
+        //    };
+        //}
 
         static void TestRestService(string url, HttpMethod method, string postData = null)
         {

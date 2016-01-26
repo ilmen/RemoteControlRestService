@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RemoteControlRestService.Classes
 {
-    public class CommandCollectionFactory : IFactory<string>
+    public class CommandCollectionFactory : IFactory<IEnumerable<string>>
     {
         static IEnumerable<string> commands = null;
         
@@ -13,16 +13,11 @@ namespace RemoteControlRestService.Classes
             commands = new string[] { "testcommand", "hibernate", "restart", "shutdown", "echo" };
         }
 
-        public IEnumerable<string> GetCollection()
+        public IEnumerable<string> Create()
         {
             if (commands == null) throw new ConfigurationException("Коллекция команд для задач не загружена!");
 
             return commands;
         }
-    }
-
-    public interface IFactory<T>
-    {
-        IEnumerable<T> GetCollection();
     }
 }
